@@ -121,8 +121,8 @@ const A380_3class_ULR = {
     main: ["UR1", "UL1"]
   },
   GR1: {
-    galley: ["ML3A", "MR4A"],
-    main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A"]
+    galley: ["ML3A"],
+    main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]
   },
   GR2: {
     galley: ["ML2", "MR4"],
@@ -148,8 +148,8 @@ const A380_3class_nonULR = {
     main: ["UR1"]
   },
   GR1: {
-    galley: ["ML3A", "MR4A"],
-    main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A"]
+    galley: ["ML3A"],
+    main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]
   },
   GR2: {
     galley: ["ML2", "MR4"],
@@ -181,7 +181,7 @@ const A380_2class_ULR = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at ML2A, temporarly available on all flights during covid
+  }, //seats at ML2A, temporary available on all flights during COVID
   EXTRA: ["MR3A", "MR2A", "ML4A", "MR4A"]
 };
 const A380_2class_nonULR = {
@@ -204,7 +204,7 @@ const A380_2class_nonULR = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at ML2A, temporarly available on all flights during covid
+  }, //seats at ML2A, temporary available on all flights during COVID
   EXTRA: ["MR3A", "MR2A", "ML4A", "MR4A"]
 };
 const B773_2class = {
@@ -227,7 +227,7 @@ const B773_2class = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at R5C, temporarly available on all flights during covid
+  }, //seats at R5C, temporary available on all flights during COVID
   EXTRA: ["R5A"]
 };
 const B773_3class = {
@@ -254,7 +254,7 @@ const B773_3class = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at R5C, temporarly available on all flights during covid
+  }, //seats at R5C, temporary available on all flights during COVID
   EXTRA: ["R5A"]
 };
 const B772 = {
@@ -277,8 +277,8 @@ const B772 = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at R4C, temporarly available on all flights during covid
-  EXTRA: {Extra: ["R4A"]}
+  }, //seats at R4C, temporary available on all flights during COVID
+  EXTRA: ["R4A"]
 };
 const B773_cargoModified_nonULR = {
   CREW: ["L1", "L2", "R5"],
