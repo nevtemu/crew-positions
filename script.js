@@ -4,11 +4,106 @@ let field2 = document.getElementById("select3");
 let field1 = document.getElementById("select2");
 let positions;
 let data;
+let crewList = [];
 
 const dataStats = (input) => {
 data = input;
 document.getElementById('dataLength').innerHTML = input.length;
-console.log(data)
+
+//++++++++++
+const parser = new DOMParser();
+	const doc = parser.parseFromString(data, 'text/html');
+let crew= [];
+crew = doc.getElementsByClassName('crew-card')
+for (let n of crew){
+
+const nickname = n.getElementsByClassName('nickname')[0].innerHTML
+const id = n.getElementsByClassName('id')[0].innerHTML.slice(1)
+const fullname = n.getElementsByClassName('fullname')[0].innerHTML
+const grade = n.getElementsByClassName('grade')[0].innerHTML
+const content = n.getElementsByClassName('crew-content')[0].innerHTML
+const badges = n.getElementsByClassName('badges')[0].innerHTML
+
+
+
+const nationality =
+// content.substring(
+//   content.indexOf(
+//     `<img src="https://emiratesgroup.sharepoint.com/sites/ccp/Shared Documents/ACI/country/`
+//   ),
+//   content.indexOf(`.png" alt>  </p>`) + 10
+// ) +
+content.substring(
+  content.indexOf("ality:</b>")+10,
+  content.indexOf(`&nbsp;`)
+)
+  .replace("Korea, Republic Of", "Korea")
+  .replace("Czech Republic", "Czech")
+  .replace("Taiwan, Province Of China", "Taiwan")
+  .replace("United Arab Emirates", "UAE")
+  .replace("Russian Federation", "Russia");
+
+const languages = content.substring(
+content.indexOf("Languages:</b> ") + 15,
+content.indexOf(`</p>      <p><b>CCM:`)
+).replace("Ukranian", "Ukrainian");
+
+
+let timeInGrade;
+if (content.includes("Years") === -1) {
+timeInGrade =
+  content.substring(
+    content.indexOf("<b>Grade Exp: </b>") + 18,
+    content.indexOf(" Year")
+  ) +
+  " y " +
+  content.substring(
+    content.indexOf("Year") + 6,
+    content.indexOf("Month")
+  ) +
+  "m";
+} else {
+timeInGrade =
+  content.substring(
+    content.indexOf("<b>Grade Exp: </b>") + 18,
+    content.indexOf(" Year")
+  ) +
+  " y " +
+  content.substring(
+    content.indexOf("Year") + 5,
+    content.indexOf("Month")
+  ) +
+  "m";
+}
+
+let ratingDF = ""; //DF rating ест ьне у всех потому назначил ему тире, также и коммент есть не у всех (см. ниже)
+if (
+//проверяет есть ли у крю DF rating
+badges.includes("[data-original-title*='EMIRATESRED']")
+) {
+ratingDF = badges.substring(badges.indexOf('SELLER'), badges.indexOF("SELLER")+10 ).slice(-1);
+}
+
+let comment = "";
+if (n.getElementsByClassName("comment").length >= 1) {
+comment = n.getElementsByClassName("comment").innerHTML
+}
+
+crewList.push({
+  grade,
+  nickname,
+  fullname,
+  nationality,
+  ratingDF,
+  comment,
+  id,
+  languages,
+  timeInGrade
+  }) 
+
+}
+
+console.log(crewList)
 }
 const aircraftSelection1 = (type) => {
   field2.innerHTML = ``;
