@@ -8,6 +8,7 @@ let data;
 const dataStats = (input) => {
 data = input;
 document.getElementById('dataLength').innerHTML = input.length;
+console.log(data)
 }
 const aircraftSelection1 = (type) => {
   field2.innerHTML = ``;
@@ -24,7 +25,7 @@ const aircraftSelection1 = (type) => {
     case "B772":
       field1.innerHTML = ``;
       aircraftType = type;
-      console.log(aircraftType);
+loadPositions(aircraftType);
       break;
     case "B773":
       field1.innerHTML =
@@ -54,17 +55,10 @@ const aircraftSelectionB773 = (type) => {
   type2 = type;
   switch (type) {
     case "_2class":
+    case "_3class":
       field2.innerHTML =``;
       aircraftType = type1+type2;
-      console.log(aircraftType);
-      break;
-    case "_3class":
-      field2.innerHTML =
-        `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
-        <option value="1" disabled="" selected="" hidden>Select type</option>
-          <option value="_ULR">ULR</option>
-          <option value="_nonULR">nonULR</option>
-        </select>`;
+loadPositions(aircraftType);
       break;
     case "_cargoModified":
       field2.innerHTML =
@@ -88,11 +82,26 @@ const aircraftSelectionB773 = (type) => {
 const aircraftSelection3 = (type) => {
   type3 = type;
   aircraftType = type1 + type2 + type3;
-  positions = { ...eval(aircraftType) };
+  loadPositions(aircraftType)
+}
+const loadPositions = (aType) => {
+  positions = { ...eval(aType) };
   let field = document.getElementById('positions');
   field.innerHTML = JSON.stringify(positions);
+  //VCM check
+  let positionsList = [];
+  Object.keys(positions).forEach((grade)=>{
+    if (grade != "EXTRA"){
+      Object.keys(positions[grade]).forEach((group)=>{
+        positions[grade][group].forEach((item)=>{
+                  positionsList.push(item)}
+          )
+    });
+    }
+})
+console.log(positionsList)
+//End of VCM check
 }
-
 
 // order positions matter - more important first
 // how to make sure doors covered
@@ -231,7 +240,7 @@ const B773_3class = {
     main: ["L5", "R2A"]
   },
   FG1: {
-    galley: ["UL1"],
+    galley: ["L1"],
     main: ["R1"]
   },
   GR1: {
@@ -269,7 +278,7 @@ const B772 = {
     galley: [],
     main: ["CSA"]
   }, //seats at R4C, temporarly available on all flights during covid
-  EXTRA: ["R4A"]
+  EXTRA: {Extra: ["R4A"]}
 };
 const B773_cargoModified_nonULR = {
   CREW: ["L1", "L2", "R5"],
