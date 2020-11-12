@@ -76,11 +76,8 @@ timeInGrade =
   "m";
 }
 
-let ratingDF = ""; //DF rating ест ьне у всех потому назначил ему тире, также и коммент есть не у всех (см. ниже)
-if (
-//проверяет есть ли у крю DF rating
-badges.includes("[data-original-title*='EMIRATESRED']")
-) {
+let ratingDF = ""; 
+if (badges.includes("[data-original-title*='EMIRATESRED']")) {
 ratingDF = badges.substring(badges.indexOf('SELLER'), badges.indexOF("SELLER")+10 ).slice(-1);
 }
 
@@ -105,6 +102,7 @@ crewList.push({
 
 console.log(crewList)
 }
+
 const aircraftSelection1 = (type) => {
   field2.innerHTML = ``;
   type1 = type;
@@ -195,6 +193,7 @@ const loadPositions = (aType) => {
     }
 })
 console.log(positionsList)
+if (crewList.length != positionsList.length) {console.log(`VCM! ${positionsList.length-crewList.length}`)}
 //End of VCM check
 }
 
