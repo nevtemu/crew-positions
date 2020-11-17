@@ -21,7 +21,7 @@
 <span id="select2"></span>
 <span id="select3"></span>
 <div id="positions"></div>
-<div><label for="sectors">Number of sectors:</label><input type="number" name="sectors" id="numberOfSectors" min="1" max="9" value="2"></div>
+<div><label for="sectors">Number of sectors:</label><input type="number" name="sectors" id="numberOfSectors" min="1" max="9" value="2" onchange="loadNumberOfSectors(this.value)"></div>
 <div><label for="crew">Enter crew data:</label><input type="text" name="crew" id="crewData" onchange="dataStats(this.value)"> Current data length: <span id="dataLength"></span></div>
 
 </body>
