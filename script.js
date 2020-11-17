@@ -20,7 +20,8 @@ document.getElementById('dataLength').innerHTML = input.length;
 
 //++++++++++
 const parser = new DOMParser();
-	const doc = parser.parseFromString(data, 'text/html');
+  const doc = parser.parseFromString(data, 'text/html');
+  crewList = [];
 let crew= [];
 crew = doc.getElementsByClassName('crew-card')
 for (let n of crew){
@@ -62,24 +63,24 @@ if (content.includes("Years") === -1) {
 timeInGrade =
   content.substring(
     content.indexOf("<b>Grade Exp: </b>") + 18,
-    content.indexOf(" Year")
+    content.indexOf("Year")-1
   ) +
-  " y " +
+  "y " +
   content.substring(
     content.indexOf("Year") + 6,
-    content.indexOf("Month")
+    content.indexOf("Month")-1
   ) +
   "m";
 } else {
 timeInGrade =
   content.substring(
     content.indexOf("<b>Grade Exp: </b>") + 18,
-    content.indexOf(" Year")
+    content.indexOf("Year")-1
   ) +
-  " y " +
+  "y " +
   content.substring(
     content.indexOf("Year") + 5,
-    content.indexOf("Month")
+    content.indexOf("Month")-1
   ) +
   "m";
 }
