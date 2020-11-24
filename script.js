@@ -5,13 +5,17 @@ let field1 = document.getElementById("select2");
 let positions;
 let data;
 let crewList = [];
-let numberOfSectors, numberOfSectorsObject = {position1: ""};
+let numberOfSectors, positionsObject = {position1: ""};
+let hasBreaks = false;
 
 const loadNumberOfSectors = (m) => {
   numberOfSectors = m;
-  numberOfSectorsObject = {}
+  positionsObject = {}
   for (let i=1;i<=m;i++){
-    numberOfSectorsObject[`position${i}`]="";
+    positionsObject[`position${i}`]="";
+    if (hasBreaks){
+      positionsObject[`break${i}`]="";
+    }
   }
 }
 const dataStats = (input) => {
@@ -105,7 +109,7 @@ crewList.push({
   id,
   languages,
   timeInGrade,
-  ... numberOfSectorsObject
+  ... positionsObject
   }) 
 
 
@@ -114,7 +118,7 @@ crewList.push({
 console.log(crewList)
 }
 
-
+const breaksLoad = (k) => hasBreaks=k;
 
 const aircraftSelection1 = (type) => {
   field2.innerHTML = ``;
