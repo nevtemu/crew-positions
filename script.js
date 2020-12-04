@@ -89,6 +89,10 @@ timeInGrade =
   ) +
   "m";
 }
+let y = parseInt(timeInGrade.substring(0, timeInGrade.indexOf("y")));
+let m = parseInt(timeInGrade.substring(timeInGrade.indexOf("y")+1, timeInGrade.indexOf("m")));
+console.log(y+"   "+m)
+let timeInGradeNumber = m+y*12;
 let ratingIR = 21; 
 if (badges.includes("EMIRATESRED TOP SELLER")) {
 ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
@@ -109,6 +113,7 @@ crewList.push({
   id,
   languages,
   timeInGrade,
+  timeInGradeNumber,
   inflightRetail: false,
   ... positionsObject
   }) 
@@ -118,6 +123,7 @@ crewList.push({
 
 console.log(crewList)
 selectIR()
+selectPositions()
 }
 
 const breaksLoad = (k) => hasBreaks=k;
@@ -129,6 +135,25 @@ function selectIR (){
   for (let i=0; i<x; i++){
     crewList[i].inflightRetail = true;
   }
+}
+function selectPositions (s){
+  let positionsActive = {...positions}
+  positionsActive.forEach((grade)=>{
+if (grade.galley.length!==0){
+  grade.galley.forEach((position)=>{
+    const filteredCrew = crewList.filter( x => 
+      x.grade === grade && cx
+    );
+  })
+}
+  }
+  )
+
+
+  const filteredCrew = crewList.filter( x => 
+    x.grade === "GR2" 
+  );
+  console.log(filteredCrew)
 }
 
 
