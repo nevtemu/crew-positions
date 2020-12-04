@@ -3,11 +3,13 @@ let type1, type2, type3;
 let field2 = document.getElementById("select3");
 let field1 = document.getElementById("select2");
 let positions;
+
 let data;
 let crewList = [];
 let numberOfSectors, positionsObject = {position1: ""};
 let hasBreaks = false;
 
+//----Crew data, flight data
 const loadNumberOfSectors = (m) => {
   numberOfSectors = m;
   positionsObject = {}
@@ -22,7 +24,6 @@ const dataStats = (input) => {
 data = input;
 document.getElementById('dataLength').innerHTML = input.length;
 
-//++++++++++
 const parser = new DOMParser();
   const doc = parser.parseFromString(data, 'text/html');
   crewList = [];
@@ -88,15 +89,14 @@ timeInGrade =
   ) +
   "m";
 }
-
-let ratingDF = ""; 
-if (badges.includes("[data-original-title*='EMIRATESRED']")) {
-ratingDF = badges.substring(badges.indexOf('SELLER'), badges.indexOF("SELLER")+10 ).slice(-1);
+let ratingIR = 21; 
+if (badges.includes("EMIRATESRED TOP SELLER")) {
+ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
 }
 
 let comment = "";
 if (n.getElementsByClassName("comment").length >= 1) {
-comment = n.getElementsByClassName("comment").innerHTML
+comment = n.getElementsByClassName("comment")[0].innerHTML;
 }
 
 crewList.push({
@@ -104,11 +104,12 @@ crewList.push({
   nickname,
   fullname,
   nationality,
-  ratingDF,
+  ratingIR,
   comment,
   id,
   languages,
   timeInGrade,
+  inflightRetail: false,
   ... positionsObject
   }) 
 
@@ -116,10 +117,26 @@ crewList.push({
 }
 
 console.log(crewList)
+selectIR()
 }
 
 const breaksLoad = (k) => hasBreaks=k;
 
+
+function selectIR (){
+  crewList.sort((a, b) => a.ratingIR - b.ratingIR);
+  let x = aircraftType.includes('A380') ? 2 : 1;
+  for (let i=0; i<x; i++){
+    crewList[i].inflightRetail = true;
+  }
+}
+
+
+
+
+
+
+//----Aircraft type selectors
 const aircraftSelection1 = (type) => {
   field2.innerHTML = ``;
   type1 = type;
@@ -210,7 +227,7 @@ const loadPositions = (aType) => {
     }
 })
 console.log(positionsList)
-if (crewList.length != positionsList.length) {console.log(`VCM! ${positionsList.length-crewList.length}`)}
+if (crewList.length !== positionsList.length) {console.log(`VCM! ${positionsList.length-crewList.length}`)}
 //End of VCM check
 }
 
