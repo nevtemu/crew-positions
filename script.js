@@ -3,6 +3,7 @@ let type1, type2, type3;
 let field2 = document.getElementById("select3");
 let field1 = document.getElementById("select2");
 let positions;
+let VCM=0;
 
 let data;
 let crewList = [];
@@ -150,7 +151,6 @@ function selectPositions (s){
       positionsActive[grade][type].forEach((position)=>{
           const filteredCrew = crewList.filter( x => 
           x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="");
-          console.log(filteredCrew)
           filteredCrew[0][`position${s}`] = position;
   
     })//position
@@ -256,9 +256,188 @@ const loadPositions = (aType) => {
     });
     }
 })
-// console.log(positionsList)
-if (crewList.length !== positionsList.length) {console.log(`VCM! ${positionsList.length-crewList.length}`)}
+
+if (crewList.length !== positionsList.length) {
+  VCM = positionsList.length-crewList.length;
+  console.log(`VCM ${VCM} operation`)
+  VCMrules()
+}
 //End of VCM check
+}
+
+function VCMrules (){
+//CSA check
+const filteredCrew = crewList.filter( x => 
+  x.grade === "CSA");
+  if (fileteredCrew.length === 0){
+    positions.CSA.main.pop();
+    positions.GR2.main.push("CSA")
+  }
+//Crew positions adjustment
+  switch(aircraftType) {
+    case "A380_3class_ULR":
+    case "A380_3class_nonULR":
+      //=======================
+        if (VCM >= 2){ //Because CSA conted towards total crew compliment. If no CSA (VCM 1) it will be adjusted in previous lines of code
+          poisitions.GR2.main.splice(indexOf("CSA"),1);
+          poisitions.GR2.main.splice(indexOf("MR3"),1);
+          poisitions.GR2.main.push("MR3 (CSA)");
+        }
+        if (VCM >= 3){ 
+          poisitions.GR2.main.splice(indexOf("ML4"),1)
+          poisitions.GR1.main.splice(indexOf("ML4A"),1)
+          poisitions.GR1.main.push("ML4 (ML4A)")
+        }
+        if (VCM >= 4){ 
+          poisitions.GR2.main.splice(indexOf("MR5"),1)
+          poisitions.GR1.main.splice(indexOf("MR4A"),1)
+          poisitions.GR1.main.push("MR5 (MR4A)")
+        }
+        if (VCM >= 5){ 
+          poisitions.GR2.main.splice(indexOf("ML3"),1)
+          poisitions.GR1.main.splice(indexOf("ML3A"),1)
+          poisitions.GR1.main.push("ML3 (ML3A)")
+        }
+        if (VCM >= 6 && aircraftType === "A380_3class_ULR"){ 
+          poisitions.CSV.main.splice(indexOf("ML1"),1)
+          poisitions.PUR.main.splice(indexOf("PUR"),1)
+          poisitions.GR2.main.splice(indexOf("MR1"),1)
+          poisitions.PUR.main.push("ML1 (PUR)")
+          poisitions.CSV.main.push("MR1 (ML1)")
+        }
+        if (VCM >= 6 && aircraftType === "A380_3class_nonULR"){ 
+          poisitions.PUR.main.splice(indexOf("PUR"),1)
+          poisitions.GR2.main.splice(indexOf("ML1"),1)
+          poisitions.PUR.main.push("ML1 (PUR)")
+        }
+        if (VCM >= 7){
+          console.error("Less than minimum crew requirement to operate")
+        }
+      //===========================
+      break;
+    case "A380_2class_ULR":
+    case "A380_2class_nonULR":
+      //=======================
+      if (VCM >= 2){ 
+        poisitions.GR2.main.splice(indexOf("CSA"),1);
+        poisitions.GR2.main.splice(indexOf("MR3"),1);
+        poisitions.GR2.main.push("MR3 (CSA)");
+      }
+      if (VCM >= 3){ 
+        poisitions.GR2.main.splice(indexOf("ML3"),1)
+        poisitions.GR1.main.splice(indexOf("ML3A"),1)
+        poisitions.GR1.main.push("ML3 (ML3A)")
+      }
+      if (VCM >= 4 && aircraftType === "A380_3class_ULR"){ 
+        poisitions.CSV.main.splice(indexOf("ML1"),1)
+        poisitions.PUR.main.splice(indexOf("PUR"),1)
+        poisitions.GR2.main.splice(indexOf("MR1"),1)
+        poisitions.PUR.main.push("ML1 (PUR)")
+        poisitions.CSV.main.push("MR1 (ML1)")
+      }
+      if (VCM >= 4 && aircraftType === "A380_3class_nonULR"){ 
+        poisitions.PUR.main.splice(indexOf("PUR"),1)
+        poisitions.GR2.main.splice(indexOf("ML1"),1)
+        poisitions.PUR.main.push("ML1 (PUR)")
+      }
+      if (VCM >= 5){
+        console.error("Less than minimum crew requirement to operate")
+      }
+    //===========================
+    break;
+    case "B773_2class":
+      //=======================
+      if (VCM >= 2){ 
+        poisitions.GR2.main.splice(indexOf("CSA"),1);
+        poisitions.GR2.main.splice(indexOf("R3"),1);
+        poisitions.GR2.main.push("R3 (CSA)");
+      }
+      if (VCM >= 3){ 
+        poisitions.GR2.main.splice(indexOf("L5A"),1);
+      }
+      if (VCM >= 4){ 
+        poisitions.GR1.main.splice(indexOf("L1A"),1);
+        poisitions.GR2.main.splice(indexOf("R2"),1);
+        poisitions.GR1.main.push("R2 (L1A)");
+      }
+      if (VCM >= 5){ 
+        poisitions.GR1.main.splice(indexOf("L1"),1);
+        poisitions.GR2.main.splice(indexOf("L2"),1);
+        poisitions.PUR.main.splice(indexOf("PUR"),1);
+        poisitions.GR1.main.push("L2 (L1)");
+        poisitions.PUR.main.push("L1 (PUR)");
+      }
+      if (VCM >= 6){
+        console.error("Less than minimum crew requirement to operate")
+      }
+      //========================
+      break;
+    case "B773_3class":
+      //=======================
+      if (VCM >= 2){ 
+        poisitions.GR2.main.splice(indexOf("CSA"),1);
+        poisitions.GR2.main.splice(indexOf("R3"),1);
+        poisitions.GR2.main.push("R3 (CSA)");
+      }
+      if (VCM >= 3){ 
+        poisitions.GR2.main.splice(indexOf("L5A"),1);
+      }
+      if (VCM >= 4){ 
+        poisitions.GR1.main.splice(indexOf("L2A"),1);
+        poisitions.GR2.main.splice(indexOf("L4"),1);
+        poisitions.GR1.main.push("L4 (L2A)");
+      }
+      if (VCM >= 5){ 
+        poisitions.CSV.main.splice(indexOf("R2A"),1);
+        poisitions.GR2.main.splice(indexOf("R4"),1);
+        poisitions.CSV.main.push("R4 (R2A)");
+      }
+      if (VCM >= 6){ 
+        poisitions.FG1.main.splice(indexOf("L1"),1);
+        poisitions.GR2.main.splice(indexOf("R5"),1);
+        poisitions.PUR.main.splice(indexOf("PUR"),1);
+        poisitions.FG1.main.push("R5 (L1)");
+        poisitions.PUR.main.push("L1 (PUR)");
+      }
+      if (VCM >= 7){
+        console.error("Less than minimum crew requirement to operate")
+      }
+      break;
+      case "B772":
+      //=======================
+      if (VCM >= 2){ 
+        poisitions.GR2.main.splice(indexOf("CSA"),1);
+        poisitions.GR2.main.splice(indexOf("R3"),1);
+        poisitions.GR2.main.push("R3 (CSA)");
+      }
+      if (VCM >= 3){ 
+        poisitions.GR2.main.splice(indexOf("L4A"),1);
+      }
+      if (VCM >= 4){ 
+        poisitions.GR1.main.splice(indexOf("R1A"),1);
+        poisitions.GR2.main.splice(indexOf("R2"),1);
+        poisitions.GR1.main.push("R2 (R1A)");
+      }
+      if (VCM >= 5){ 
+        poisitions.GR1.main.splice(indexOf("L1A"),1);
+        poisitions.GR2.main.splice(indexOf("L2"),1);
+        poisitions.GR1.main.push("L2 (L1A)");
+      }
+      if (VCM >= 6){ 
+        poisitions.GR1.main.splice(indexOf("L1"),1);
+        poisitions.GR2.main.splice(indexOf("R4"),1);
+        poisitions.PUR.main.splice(indexOf("PUR"),1);
+        poisitions.GR1.main.push("R4 (L1)");
+        poisitions.PUR.main.push("L1 (PUR)");
+      }
+      if (VCM >= 7){
+        console.error("Less than minimum crew requirement to operate")
+      }
+      //========================
+      break;
+    default:
+      console.error("Aircraft type not found!")
+  }
 }
 
 // order positions matter - more important first
@@ -409,11 +588,11 @@ const B773_3class = {
     galley: ["R5", "L5A"],
     main: ["L3", "L4", "R4", "R3"]
   },
-  // CSA: {
-  //   galley: [],
-  //   main: ["CSA"]
-  // }, //seats at R5C, temporary available on all flights during COVID
-  // EXTRA: ["R5A"]
+  CSA: {
+    galley: [],
+    main: ["CSA"]
+  }, //seats at R5C, temporary available on all flights during COVID
+  EXTRA: ["R5A"]
 };
 const B772 = {
   PUR: {
