@@ -91,8 +91,9 @@ timeInGrade =
 }
 let y = parseInt(timeInGrade.substring(0, timeInGrade.indexOf("y")));
 let m = parseInt(timeInGrade.substring(timeInGrade.indexOf("y")+1, timeInGrade.indexOf("m")));
-console.log(y+"   "+m)
 let timeInGradeNumber = m+y*12;
+
+
 let ratingIR = 21; 
 if (badges.includes("EMIRATESRED TOP SELLER")) {
 ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
@@ -121,9 +122,12 @@ crewList.push({
 
 }
 
-console.log(crewList)
+
 selectIR()
-selectPositions()
+for (let s=1; s<=numberOfSectors; s++){
+  selectPositions(s)
+}
+console.log(crewList)
 }
 
 const breaksLoad = (k) => hasBreaks=k;
@@ -138,22 +142,23 @@ function selectIR (){
 }
 function selectPositions (s){
   let positionsActive = {...positions}
-  positionsActive.forEach((grade)=>{
-if (grade.galley.length!==0){
-  grade.galley.forEach((position)=>{
-    const filteredCrew = crewList.filter( x => 
-      x.grade === grade && cx
-    );
-  })
-}
-  }
-  )
+  Object.keys(positionsActive).forEach((grade)=>{
+    Object.keys(positionsActive[grade]).forEach((type)=>{
+      
+    if (positionsActive[grade][type].length!==0){
+      console.log(type)
+      positionsActive[grade][type].forEach((position)=>{
+          const filteredCrew = crewList.filter( x => 
+          x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="");
+          console.log(filteredCrew)
+          filteredCrew[0][`position${s}`] = position;
+  
+    })//position
+  
+  }//if type
+})//type
 
-
-  const filteredCrew = crewList.filter( x => 
-    x.grade === "GR2" 
-  );
-  console.log(filteredCrew)
+  }  )//positionActive
 }
 
 
@@ -251,7 +256,7 @@ const loadPositions = (aType) => {
     });
     }
 })
-console.log(positionsList)
+// console.log(positionsList)
 if (crewList.length !== positionsList.length) {console.log(`VCM! ${positionsList.length-crewList.length}`)}
 //End of VCM check
 }
@@ -404,11 +409,11 @@ const B773_3class = {
     galley: ["R5", "L5A"],
     main: ["L3", "L4", "R4", "R3"]
   },
-  CSA: {
-    galley: [],
-    main: ["CSA"]
-  }, //seats at R5C, temporary available on all flights during COVID
-  EXTRA: ["R5A"]
+  // CSA: {
+  //   galley: [],
+  //   main: ["CSA"]
+  // }, //seats at R5C, temporary available on all flights during COVID
+  // EXTRA: ["R5A"]
 };
 const B772 = {
   PUR: {
