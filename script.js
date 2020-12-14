@@ -28,7 +28,12 @@ const EXTRA = {
   A380_2class_nonULR: ["MR3A", "MR2A", "ML4A", "MR4A"],
   B773_2class: ["R5A"],
   B773_3class: ["R5A"],
-  B772: ["R4A"]
+  B772: ["R4A"],
+  B773_cargo_ULR: ["L3", "L4", "R4", "R3", "L5", "R5"],
+  B773_cargo_ETOPS: ["R2", "L3", "L4", "R4", "R3", "L5", "R5"],
+  B773_cargo_nonULR: ["L2", "R2", "L3", "L4", "R4", "R3", "L5", "R5"],
+  B773_cargoModified_ULR: ["R1", "R2", "L3", "L4", "R4", "R3"],
+  B773_cargoModified_nonULR: ["R1", "R2", "L3", "L4", "R4", "R3", "L5"]
 }
 
 
@@ -63,7 +68,6 @@ function selectPositions (s){
 
   Object.keys(positionsActive).forEach((grade)=>{
     
-    if(positionsActive[grade] !== "EXTRA"){
     Object.keys(positionsActive[grade]).forEach((type)=>{
       if (positionsActive[grade][type].length!==0){
               if (type === "galley"){
@@ -109,9 +113,9 @@ function selectPositions (s){
   }//if type
 
 })//type
-    }//if grade = extra
+
   }  )//positionActive
-  console.log(crewList)
+  // console.log(crewList)
 }
 
 
@@ -203,13 +207,12 @@ const loadPositions = (aType) => {
   //VCM check
   let positionsList = [];
   Object.keys(positions).forEach((grade)=>{
-    if (grade != "EXTRA"){
       Object.keys(positions[grade]).forEach((group)=>{
         positions[grade][group].forEach((item)=>{
                   positionsList.push(item)}
           )
     });
-    }
+    
 })
 // console.log(positionsList)
 if (crewList.length !== positionsList.length) {
@@ -577,26 +580,11 @@ const B772 = {
     main: ["CSA"]
   } //seats at R4C, temporary available on all flights during COVID
 };
-const B773_cargoModified_nonULR = {
-  CREW: ["L1", "L2", "R5"],
-  EXTRA: ["R1", "R2", "L3", "L4", "R4", "R3", "L5"]
-};
-const B773_cargoModified_ULR = {
-  CREW: ["L1", "L2", "R5", "L5"],
-  EXTRA: ["R1", "R2", "L3", "L4", "R4", "R3"]
-};
-const B773_cargo_nonULR = {
-  CREW: ["L1", "R1"],
-  EXTRA: ["L2", "R2", "L3", "L4", "R4", "R3", "L5", "R5"]
-};
-const B773_cargo_ETOPS = {
-  CREW: ["L1", "R1", "L2"],
-  EXTRA: ["R2", "L3", "L4", "R4", "R3", "L5", "R5"]
-};
-const B773_cargo_ULR = {
-  CREW: ["L1", "R1", "L2", "R2"],
-  EXTRA: ["L3", "L4", "R4", "R3", "L5", "R5"]
-};
+const B773_cargoModified_nonULR = ["L1", "L2", "R5"];
+const B773_cargoModified_ULR = ["L1", "L2", "R5", "L5"];
+const B773_cargo_nonULR = ["L1", "R1"];
+const B773_cargo_ETOPS = ["L1", "R1", "L2"];
+const B773_cargo_ULR = ["L1", "R1", "L2", "R2"];
 
 
 const getRandomNumber = (min, max) =>
@@ -792,19 +780,31 @@ function generate () {
   breaksLoad();
   loadNumberOfSectors();
   loadCrew();
+  if (aircraftType.includes("cargo")){loadPositionsCargo()}
+  else{
   loadPositions(aircraftType);
-  checkOutOfGrade();
-  selectIR();
-  for (let s=1; s<=numberOfSectors; s++){
-    selectPositions(s)
+  checkOutOfGrade();}
+  if (aircraftType.includes("cargo")){
+selectPositionsCargo();
   }
+  else{
+    selectIR();
+    for (let s=1; s<=numberOfSectors; s++){
+      selectPositions(s)
+    }
+  }
+
   // console.log(crewList)
   createOutput();
 }
 
+function selectPositionsCargo () {
+positions.forEach((h, index) => crewList[index].position=h)
+}
 
-
-
+function loadPositionsCargo (){
+  positions = [...aircraftType]
+}
 
 
 
@@ -907,3 +907,4 @@ document.querySelector("#output").innerHTML = g;
 function hideShowSettings (){
   document.getElementById("settings").classList.toggle("hidden")
 }
+
