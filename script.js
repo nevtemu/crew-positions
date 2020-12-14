@@ -581,15 +581,13 @@ const grade = n.getElementsByClassName('grade')[0].innerHTML
 const content = n.getElementsByClassName('crew-content')[0].innerHTML
 const badges = n.getElementsByClassName('badges')[0].innerHTML
 
-
-
+const flag = content.substring(
+  content.indexOf(`<img src="https://emiratesgroup.sharepoint.com/sites/ccp/Shared Documents/ACI/country/`) +10,
+  content.indexOf(`.png" alt="" data-themekey="#">  </p>      <p class="break"><b>Languages:</b>`)+4
+) 
+console.log(flag)
 const nationality =
-// content.substring(
-//   content.indexOf(
-//     `<img src="https://emiratesgroup.sharepoint.com/sites/ccp/Shared Documents/ACI/country/`
-//   ),
-//   content.indexOf(`.png" alt>  </p>`) + 10
-// ) +
+
 content.substring(
   content.indexOf("ality:</b>")+10,
   content.indexOf(`&nbsp;`)
@@ -655,6 +653,7 @@ crewList.push({
   nickname,
   fullname,
   nationality,
+  flag,
   ratingIR,
   comment,
   staffNumber,
@@ -778,7 +777,7 @@ fileContentInsert+=`<td><div contenteditable>${item["position"+s]}</div></td>`;
     }
 
 }
-  fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+  fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
   lastGrade = item.grade;
 }//createTable
 let g = header + fileContent + footer;
