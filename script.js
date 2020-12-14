@@ -665,7 +665,6 @@ function generate () {
   loadNumberOfSectors();
   loadCrew();
   loadPositions(aircraftType);
-  console.log(positionsObject)
   selectIR();
   for (let s=1; s<=numberOfSectors; s++){
     selectPositions(s)
@@ -683,7 +682,7 @@ for (const s of Object.keys(positionsObject)){
 headerInsert+=`<th>${s}</th>`
 }
   const header = `
-  <table border="1">  <!--border="1"-->
+  <table border="1">  
     <tr>
       <th>Grade</th>
       <th>Nickname</th>
@@ -704,19 +703,26 @@ function createTable(item, index) {
   if (lastGrade == "") {
     // item.grade = "PUR"; // добавляет мне праивльный грейд
     // далее код добавляет рядки-разделители разных кабин
-    fileContent += `<tr><td class="centerCell"colspan="11" style="background-color:#F7DC6F"><b>Seniors</b></td></tr>`;
+    fileContent += `<tr><td class="centerCell"colspan="30" style="background-color:#F7DC6F"><b>Seniors</b></td></tr>`;
   }
   if (lastGrade !== item.grade && item.grade == "GR1") {
-    fileContent += `<tr class="CSA"><td class="centerCell" colspan="11" style="background-color:#5DADE2"><b>Business class</b></td></tr>`;
+    fileContent += `<tr class="CSA"><td class="centerCell" colspan="30" style="background-color:#5DADE2"><b>Business class</b></td></tr>`;
   }
   if (lastGrade !== item.grade && item.grade == "FG1") {
-    fileContent += `<tr><td class="centerCell" colspan="11" style="background-color:#EC7063"><b>First class</b></td></tr>`;
+    fileContent += `<tr><td class="centerCell" colspan="30" style="background-color:#EC7063"><b>First class</b></td></tr>`;
   }
   if (lastGrade !== item.grade && item.grade == "GR2") {
-    fileContent += `<tr><td class="centerCell" colspan="11" style="background-color:#52BE80"><b>Economy class class</b></td></tr>`;
+    fileContent += `<tr><td class="centerCell" colspan="30" style="background-color:#52BE80"><b>Economy class class</b></td></tr>`;
   }
+let fileContentInsert = "";
+for (let s=1; s<=numberOfSectors; s++){
+fileContentInsert+=`<td><div contenteditable>${item["position"+s]}</div></td>`;
+    if (hasBreaks){
+      fileContentInsert+=`<td><div contenteditable>${item["break"+s]}</div></td>`;
+    }
 
-  fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td><td><div contenteditable>${item.position1}</div></td><td><div contenteditable>${item.position2}</div></td><td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+}
+  fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
   lastGrade = item.grade;
 }//createTable
 let g = header + fileContent + footer;
