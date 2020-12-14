@@ -4,3 +4,7 @@ table {border-collapse: collapse;}
       tr:nth-child(even) {background-color: #E5E7E9;}
       tr:hover {background-color: #85C1E9;}
       .centerCell {text-align: center;}
+
+.hidden{
+display:none;
+}

@@ -10,7 +10,7 @@
     <title>Document</title>
 </head>
 <body>
-
+<div class="settings" id="settings">
     <label for="aircraftType">Select aircraft type:</label>
     <select name="aircraftType" id="aircraftType" onchange="aircraftSelection1(this.value)">
       <option value="1" disabled="" selected="" hidden>Select type</option>
@@ -20,13 +20,15 @@
     </select>
 <span id="select2"></span>
 <span id="select3"></span>
-<div id="positions"></div>
+<!-- <div id="positions"></div> -->
 <div><label for="sectors">Number of sectors:</label><input type="number" name="sectors" id="numberOfSectors" min="1" max="9" value="2"><label for="sectors"> *Turn-around counts as 1 sector</label>
   <input type="checkbox" name="breaks" id="breaks"><label for="breaks"> Includes break?</label>
 </div>
 <div><label for="crew">Enter crew data:</label><input type="text" name="crew" id="crewData" onchange="dataStats(this.value)"> Current data length: <span id="dataLength"></span></div>
+</div>
 <br>
-<input type="button" value="Generate" class="generateButton" id="generateButton" onclick="generate()">
+<input type="button" value="Hide settings" class="button" id="hideSettings" onclick="hideShowSettings()">
+ <input type="button" value="Generate" class="button" id="generateButton" onclick="generate()">
 <div class="ouput" id="output"></div>
 </body>
 </html>

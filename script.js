@@ -162,8 +162,10 @@ const aircraftSelection3 = (type) => {
 }
 const loadPositions = (aType) => {
   positions = { ...eval(aType) };
-  let field = document.getElementById('positions');
-  field.innerHTML = JSON.stringify(positions);
+
+  // let field = document.getElementById('positions');
+  // field.innerHTML = JSON.stringify(positions);
+
   //VCM check
   let positionsList = [];
   Object.keys(positions).forEach((grade)=>{
@@ -785,4 +787,24 @@ fileContentInsert+=`<td><div contenteditable>${item["position"+s]}</div></td>`;
 }//createTable
 let g = header + fileContent + footer;
 document.querySelector("#output").innerHTML = g;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function hideShowSettings (){
+  document.getElementById("settings").classList.toggle("hidden")
 }
