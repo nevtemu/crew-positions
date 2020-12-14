@@ -74,6 +74,7 @@ function selectPositions (s){
                           positionsActive[grade][type].forEach((position)=>{
                             const filteredCrew = crewList.filter( x => 
                             x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true);
+                            // x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true && x.inflightRetail !== true);
                             if (filteredCrew.length > 1 && grade === "GR2"){filteredCrew.pop()}//Removes most junior crew - to ensure CSA position given to most junior crew if available
                             let w = filteredCrew.length;
                             let q = getRandomNumber(0, w-1);
@@ -709,7 +710,7 @@ counter++;
       }
     }
   }
-const breaksLoad = () => {
+const loadBreakes = () => {
   const k = document.querySelector("#breaks").checked;
   hasBreaks=k;};
 
@@ -725,13 +726,12 @@ const breaksLoad = () => {
 function checkOutOfGrade (){
     Object.keys(positions).forEach((grade)=>{
     let positionsList = [];
-    if (grade != "EXTRA"){
       Object.keys(positions[grade]).forEach((group)=>{
         positions[grade][group].forEach((item)=>{
                   positionsList.push(item)}
           )
     });
-    }
+    
     const filterCrew = crewList.filter( x => x.grade === grade);
     let u = filterCrew.length - positionsList.length;
     if (u !== 0){outOfGrade.grade = u}
@@ -777,7 +777,7 @@ function outOfGradeRules (){
 
 
 function generate () {
-  breaksLoad();
+  loadBreakes();
   loadNumberOfSectors();
   loadCrew();
   if (aircraftType.includes("cargo")){
