@@ -780,21 +780,18 @@ function generate () {
   breaksLoad();
   loadNumberOfSectors();
   loadCrew();
-  if (aircraftType.includes("cargo")){loadPositionsCargo()}
+  if (aircraftType.includes("cargo")){
+    loadPositionsCargo();
+    selectPositionsCargo();
+  }
   else{
   loadPositions(aircraftType);
-  checkOutOfGrade();}
-  if (aircraftType.includes("cargo")){
-selectPositionsCargo();
-  }
-  else{
-    selectIR();
-    for (let s=1; s<=numberOfSectors; s++){
-      selectPositions(s)
-    }
-  }
-
-  // console.log(crewList)
+  checkOutOfGrade();
+  selectIR();
+  for (let s=1; s<=numberOfSectors; s++){
+    selectPositions(s)
+  }}
+   // console.log(crewList)
   createOutput();
 }
 
