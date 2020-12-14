@@ -46,10 +46,9 @@ function selectPositions (s){
                           positionsActive[grade][type].forEach((position)=>{
                             const filteredCrew = crewList.filter( x => 
                             x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="");
+                            if (filteredCrew.length > 1){filteredCrew.pop()}//Removes most junior crew - to ensure CSA position given to most junior crew if available
                             let w = filteredCrew.length;
-                            
                             filteredCrew[getRandomNumber(0, w-1)][`position${s}`] = position; 
-                            // console.log(position)
                         })//position
               }
               else {
@@ -58,16 +57,13 @@ function selectPositions (s){
                                 const filteredCrew = crewList.filter( x => 
                                   x.grade === grade && x[`position${s}`]==="");
                                   filteredCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
-                                  console.log(filteredCrew)
                                   filteredCrew[0][`position${s}`] = position;
-                                  console.log(position)
                               }
                               else{
                                 const filteredCrew = crewList.filter( x => 
                                   x.grade === grade && x[`position${s}`]==="");
                                   let w = filteredCrew.length;
                                   filteredCrew[getRandomNumber(0, w-1)][`position${s}`] = position; 
-                                  // console.log(position)
                               }
                         })//position 
               }
