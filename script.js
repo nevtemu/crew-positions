@@ -37,6 +37,21 @@ function crewFilter(grade, timeInGradeNumber, position){
 
 function selectPositions (s){
   let positionsActive = {...positions}
+
+
+//Pre-allocated positions check
+  const filterCrew = crewList.filter( x => x[`position${s}`] !== "");
+  if (filterCrew.length >0){
+        for (const r of filterCrew){
+          positionsActive[r.grade].forEach((type)=>{
+                  if (positionsActive[grade][type].includes(r[`position${s}`])){
+                    positionsActive[grade][type].splice(positionsActive[grade][type].indexOf(r[`position${s}`]),1);
+                  }
+          })}
+  }
+//End of pre-allocated positions check
+
+
   Object.keys(positionsActive).forEach((grade)=>{
     
     if(positionsActive[grade] !== "EXTRA"){
@@ -195,8 +210,9 @@ if (crewList.length !== positionsList.length) {
   if (VCM <0){ extraRules()}
  
 }
-//End of VCM check
+
 }
+
 function extraRules(){
   //For rare case, when operating with additional crew. This happens when for example 3 class crew set on return sector operates 2 class aircraft 
   //placeholder
@@ -607,7 +623,8 @@ const nationality =content.substring(
   .replace("Czech Republic", "Czech")
   .replace("Taiwan, Province Of China", "Taiwan")
   .replace("United Arab Emirates", "UAE")
-  .replace("Russian Federation", "Russia");
+  .replace("Russian Federation", "Russia")
+  .trim();
 
 const languages = content.substring(
 content.indexOf("Languages:</b> ") + 15,
