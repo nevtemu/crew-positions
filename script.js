@@ -30,6 +30,11 @@ function selectIR (){
     crewList[i].inflightRetail = true;
   }
 }
+function crewFilter(grade, timeInGradeNumber, position){
+
+}
+
+
 function selectPositions (s){
   let positionsActive = {...positions}
   Object.keys(positionsActive).forEach((grade)=>{
@@ -37,12 +42,36 @@ function selectPositions (s){
     if(positionsActive[grade] !== "EXTRA"){
     Object.keys(positionsActive[grade]).forEach((type)=>{
       if (positionsActive[grade][type].length!==0){
-      positionsActive[grade][type].forEach((position)=>{
-          const filteredCrew = crewList.filter( x => 
-          x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="");
-          filteredCrew[0][`position${s}`] = position;
-  
-    })//position
+              if (type === "galley"){
+                          positionsActive[grade][type].forEach((position)=>{
+                            const filteredCrew = crewList.filter( x => 
+                            x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="");
+                            let w = filteredCrew.length;
+                            
+                            filteredCrew[getRandomNumber(0, w-1)][`position${s}`] = position; 
+                            // console.log(position)
+                        })//position
+              }
+              else {
+                          positionsActive[grade][type].forEach((position)=>{
+                              if (position === "CSA" || position === "R3 (CSA)" || position === "MR3 (CSA)"){
+                                const filteredCrew = crewList.filter( x => 
+                                  x.grade === grade && x[`position${s}`]==="");
+                                  filteredCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
+                                  console.log(filteredCrew)
+                                  filteredCrew[0][`position${s}`] = position;
+                                  console.log(position)
+                              }
+                              else{
+                                const filteredCrew = crewList.filter( x => 
+                                  x.grade === grade && x[`position${s}`]==="");
+                                  let w = filteredCrew.length;
+                                  filteredCrew[getRandomNumber(0, w-1)][`position${s}`] = position; 
+                                  // console.log(position)
+                              }
+                        })//position 
+              }
+
   
   }//if type
 
@@ -166,7 +195,7 @@ const filteredCrew = crewList.filter( x =>
   x.grade === "CSA");
   if (filteredCrew.length === 0){
     positions.CSA.main.pop();
-    positions.GR2.main.push("CSA")
+    positions.GR2.main.unshift("CSA")
   }
 //Crew positions adjustment
   switch(aircraftType) {
@@ -176,7 +205,7 @@ const filteredCrew = crewList.filter( x =>
         if (VCM >= 1){ //Because CSA conted towards total crew compliment. If no CSA (VCM 1) it will be adjusted in previous lines of code
           positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
           positions.GR2.main.splice(positions.GR2.main.indexOf("MR3"),1);
-          positions.GR2.main.push("MR3 (CSA)");
+          positions.GR2.main.unshift("MR3 (CSA)");
         }
         if (VCM >= 2){ 
           positions.GR2.main.splice(positions.GR2.main.indexOf("ML4"),1)
@@ -216,7 +245,7 @@ const filteredCrew = crewList.filter( x =>
       if (VCM >= 1){ 
         positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
         positions.GR2.main.splice(positions.GR2.main.indexOf("MR3"),1);
-        positions.GR2.main.push("MR3 (CSA)");
+        positions.GR2.main.unshift("MR3 (CSA)");
       }
       if (VCM >= 2){ 
         positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
@@ -245,7 +274,7 @@ const filteredCrew = crewList.filter( x =>
       if (VCM >= 1){ 
         positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
         positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
-        positions.GR2.main.push("R3 (CSA)");
+        positions.GR2.main.unshift("R3 (CSA)");
       }
       if (VCM >= 2){ 
         positions.GR2.main.splice(positions.GR2.main.indexOf("L5A"),1);
@@ -272,7 +301,7 @@ const filteredCrew = crewList.filter( x =>
       if (VCM >= 1){ 
         positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
         positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
-        positions.GR2.main.push("R3 (CSA)");
+        positions.GR2.main.unshift("R3 (CSA)");
       }
       if (VCM >= 2){ 
         positions.GR2.main.splice(positions.GR2.main.indexOf("L5A"),1);
@@ -303,7 +332,7 @@ const filteredCrew = crewList.filter( x =>
       if (VCM >= 1){ 
         positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
         positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
-        positions.GR2.main.push("R3 (CSA)");
+        positions.GR2.main.unshift("R3 (CSA)");
       }
       if (VCM >= 2){ 
         positions.GR2.main.splice(positions.GR2.main.sindexOf("L4A"),1);
@@ -672,6 +701,35 @@ function generate () {
   // console.log(crewList)
   createOutput();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function createOutput () {
