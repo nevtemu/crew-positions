@@ -46,7 +46,7 @@ function selectPositions (s){
                           positionsActive[grade][type].forEach((position)=>{
                             const filteredCrew = crewList.filter( x => 
                             x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true);
-                            if (filteredCrew.length > 1){filteredCrew.pop()}//Removes most junior crew - to ensure CSA position given to most junior crew if available
+                            if (filteredCrew.length > 1 && grade === "GR2"){filteredCrew.pop()}//Removes most junior crew - to ensure CSA position given to most junior crew if available
                             let w = filteredCrew.length;
                             let q = getRandomNumber(0, w-1);
                             filteredCrew[q][`position${s}`] = position; 
@@ -65,10 +65,14 @@ function selectPositions (s){
                                   filteredCrew[0].lastPosition.shift(); 
                               }
                               else{
-                                const filteredCrew = crewList.filter( x => 
+                                let filteredCrew = crewList.filter( x => 
                                   x.grade === grade && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true);
                                   let w = filteredCrew.length;
-                                  console.log(w)
+                                  if (w===0){ //No solution. Ignore last position
+                                    filteredCrew = crewList.filter( x => 
+                                    x.grade === grade && x[`position${s}`]==="" );
+                                  w = filteredCrew.length;
+                                  }
                                   let q = getRandomNumber(0, w-1);
                                   filteredCrew[q][`position${s}`] = position; 
                                   filteredCrew[q].lastPosition.push(position); 
