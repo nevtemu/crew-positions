@@ -21,10 +21,12 @@
 <span id="select2"></span>
 <span id="select3"></span>
 <div id="positions"></div>
-<div><label for="sectors">Number of sectors:</label><input type="number" name="sectors" id="numberOfSectors" min="1" max="9" value="2" onchange="loadNumberOfSectors(this.value)"><label for="sectors"> *Turn-around counts as 1 sector</label>
-  <input type="checkbox" name="breaks" id="breaks" onchange="breaksLoad(this.checked)"><label for="breaks"> Includes break?</label>
+<div><label for="sectors">Number of sectors:</label><input type="number" name="sectors" id="numberOfSectors" min="1" max="9" value="2"><label for="sectors"> *Turn-around counts as 1 sector</label>
+  <input type="checkbox" name="breaks" id="breaks"><label for="breaks"> Includes break?</label>
 </div>
 <div><label for="crew">Enter crew data:</label><input type="text" name="crew" id="crewData" onchange="dataStats(this.value)"> Current data length: <span id="dataLength"></span></div>
-
+<br>
+<input type="button" value="Generate" class="generateButton" id="generateButton" onclick="generate()">
+<div class="ouput" id="output"></div>
 </body>
 </html>

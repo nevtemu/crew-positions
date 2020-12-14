@@ -11,127 +11,16 @@ let numberOfSectors=1, positionsObject = {position1: ""};
 let hasBreaks = false;
 
 //----Crew data, flight data
-const loadNumberOfSectors = (m) => {
-  numberOfSectors = m;
-  positionsObject = {}
-  for (let i=1;i<=m;i++){
-    positionsObject[`position${i}`]="";
-    if (hasBreaks){
-      positionsObject[`break${i}`]="";
-    }
-  }
-}
 const dataStats = (input) => {
 data = input;
 document.getElementById('dataLength').innerHTML = input.length;
 
-const parser = new DOMParser();
-  const doc = parser.parseFromString(data, 'text/html');
-  crewList = [];
-let crew= [];
-crew = doc.getElementsByClassName('crew-card')
-for (let n of crew){
 
-const nickname = n.getElementsByClassName('nickname')[0].innerHTML
-const id = n.getElementsByClassName('id')[0].innerHTML.slice(1)
-const fullname = n.getElementsByClassName('fullname')[0].innerHTML
-const grade = n.getElementsByClassName('grade')[0].innerHTML
-const content = n.getElementsByClassName('crew-content')[0].innerHTML
-const badges = n.getElementsByClassName('badges')[0].innerHTML
-
-
-
-const nationality =
-// content.substring(
-//   content.indexOf(
-//     `<img src="https://emiratesgroup.sharepoint.com/sites/ccp/Shared Documents/ACI/country/`
-//   ),
-//   content.indexOf(`.png" alt>  </p>`) + 10
-// ) +
-content.substring(
-  content.indexOf("ality:</b>")+10,
-  content.indexOf(`&nbsp;`)
-)
-  .replace("Korea, Republic Of", "Korea")
-  .replace("Czech Republic", "Czech")
-  .replace("Taiwan, Province Of China", "Taiwan")
-  .replace("United Arab Emirates", "UAE")
-  .replace("Russian Federation", "Russia");
-
-const languages = content.substring(
-content.indexOf("Languages:</b> ") + 15,
-content.indexOf(`</p>      <p><b>CCM:`)
-).replace("Ukranian", "Ukrainian");
-
-
-let timeInGrade;
-if (content.includes("Years") === -1) {
-timeInGrade =
-  content.substring(
-    content.indexOf("<b>Grade Exp: </b>") + 18,
-    content.indexOf("Year")-1
-  ) +
-  "y " +
-  content.substring(
-    content.indexOf("Year") + 6,
-    content.indexOf("Month")-1
-  ) +
-  "m";
-} else {
-timeInGrade =
-  content.substring(
-    content.indexOf("<b>Grade Exp: </b>") + 18,
-    content.indexOf("Year")-1
-  ) +
-  "y " +
-  content.substring(
-    content.indexOf("Year") + 5,
-    content.indexOf("Month")-1
-  ) +
-  "m";
-}
-let y = parseInt(timeInGrade.substring(0, timeInGrade.indexOf("y")));
-let m = parseInt(timeInGrade.substring(timeInGrade.indexOf("y")+1, timeInGrade.indexOf("m")));
-let timeInGradeNumber = m+y*12;
-
-
-let ratingIR = 21; 
-if (badges.includes("EMIRATESRED TOP SELLER")) {
-ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
-}
-
-let comment = "";
-if (n.getElementsByClassName("comment").length >= 1) {
-comment = n.getElementsByClassName("comment")[0].innerHTML;
-}
-
-crewList.push({
-  grade,
-  nickname,
-  fullname,
-  nationality,
-  ratingIR,
-  comment,
-  id,
-  languages,
-  timeInGrade,
-  timeInGradeNumber,
-  inflightRetail: false,
-  ... positionsObject
-  }) 
 
 
 }
 
 
-selectIR()
-for (let s=1; s<=numberOfSectors; s++){
-  selectPositions(s)
-}
-console.log(crewList)
-}
-
-const breaksLoad = (k) => hasBreaks=k;
 
 
 function selectIR (){
@@ -183,7 +72,7 @@ const aircraftSelection1 = (type) => {
     case "B772":
       field1.innerHTML = ``;
       aircraftType = type;
-loadPositions(aircraftType);
+// loadPositions(aircraftType);
       break;
     case "B773":
       field1.innerHTML =
@@ -216,7 +105,7 @@ const aircraftSelectionB773 = (type) => {
     case "_3class":
       field2.innerHTML =``;
       aircraftType = type1+type2;
-loadPositions(aircraftType);
+// loadPositions(aircraftType);
       break;
     case "_cargoModified":
       field2.innerHTML =
@@ -240,7 +129,7 @@ loadPositions(aircraftType);
 const aircraftSelection3 = (type) => {
   type3 = type;
   aircraftType = type1 + type2 + type3;
-  loadPositions(aircraftType)
+  // loadPositions(aircraftType)
 }
 const loadPositions = (aType) => {
   positions = { ...eval(aType) };
@@ -268,6 +157,7 @@ if (crewList.length !== positionsList.length) {
 //End of VCM check
 }
 function extraRules(){
+  //For rare case, when operating with additional crew. This happens when for example 3 class crew set on return sector operates 2 class aircraft 
   //placeholder
 }
 function VCMrules (){
@@ -648,3 +538,130 @@ const B773_cargo_ULR = {
 
 const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
+
+function loadCrew (){
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(data, 'text/html');
+  crewList = [];
+let crew= [];
+crew = doc.getElementsByClassName('crew-card')
+for (let n of crew){
+
+const nickname = n.getElementsByClassName('nickname')[0].innerHTML
+const id = n.getElementsByClassName('id')[0].innerHTML.slice(1)
+const fullname = n.getElementsByClassName('fullname')[0].innerHTML
+const grade = n.getElementsByClassName('grade')[0].innerHTML
+const content = n.getElementsByClassName('crew-content')[0].innerHTML
+const badges = n.getElementsByClassName('badges')[0].innerHTML
+
+
+
+const nationality =
+// content.substring(
+//   content.indexOf(
+//     `<img src="https://emiratesgroup.sharepoint.com/sites/ccp/Shared Documents/ACI/country/`
+//   ),
+//   content.indexOf(`.png" alt>  </p>`) + 10
+// ) +
+content.substring(
+  content.indexOf("ality:</b>")+10,
+  content.indexOf(`&nbsp;`)
+)
+  .replace("Korea, Republic Of", "Korea")
+  .replace("Czech Republic", "Czech")
+  .replace("Taiwan, Province Of China", "Taiwan")
+  .replace("United Arab Emirates", "UAE")
+  .replace("Russian Federation", "Russia");
+
+const languages = content.substring(
+content.indexOf("Languages:</b> ") + 15,
+content.indexOf(`</p>      <p><b>CCM:`)
+).replace("Ukranian", "Ukrainian");
+
+
+let timeInGrade;
+if (content.includes("Years") === -1) {
+timeInGrade =
+  content.substring(
+    content.indexOf("<b>Grade Exp: </b>") + 18,
+    content.indexOf("Year")-1
+  ) +
+  "y " +
+  content.substring(
+    content.indexOf("Year") + 6,
+    content.indexOf("Month")-1
+  ) +
+  "m";
+} else {
+timeInGrade =
+  content.substring(
+    content.indexOf("<b>Grade Exp: </b>") + 18,
+    content.indexOf("Year")-1
+  ) +
+  "y " +
+  content.substring(
+    content.indexOf("Year") + 5,
+    content.indexOf("Month")-1
+  ) +
+  "m";
+}
+let y = parseInt(timeInGrade.substring(0, timeInGrade.indexOf("y")));
+let m = parseInt(timeInGrade.substring(timeInGrade.indexOf("y")+1, timeInGrade.indexOf("m")));
+let timeInGradeNumber = m+y*12;
+
+
+let ratingIR = 21; 
+if (badges.includes("EMIRATESRED TOP SELLER")) {
+ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
+}
+
+let comment = "";
+if (n.getElementsByClassName("comment").length >= 1) {
+comment = n.getElementsByClassName("comment")[0].innerHTML;
+}
+
+crewList.push({
+  grade,
+  nickname,
+  fullname,
+  nationality,
+  ratingIR,
+  comment,
+  id,
+  languages,
+  timeInGrade,
+  timeInGradeNumber,
+  inflightRetail: false,
+  ... positionsObject
+  }) 
+
+}
+
+}
+  const loadNumberOfSectors = () => {
+    const m = document.querySelector("#numberOfSectors").value;
+    numberOfSectors = m;
+    positionsObject = {}
+    for (let i=1;i<=m;i++){
+      positionsObject[`position${i}`]="";
+      if (hasBreaks){
+        positionsObject[`break${i}`]="";
+      }
+    }
+    console.log(m)
+  }
+const breaksLoad = () => {
+  const k = document.querySelector("#breaks").checked;
+  hasBreaks=k;
+console.log(k)};
+function generate () {
+  breaksLoad();
+  loadNumberOfSectors();
+  loadCrew();
+  loadPositions(aircraftType);
+  selectIR();
+  for (let s=1; s<=numberOfSectors; s++){
+    selectPositions(s)
+  }
+  console.log(crewList)
+}
