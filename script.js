@@ -224,9 +224,11 @@ if (crewList.length !== positionsList.length) {
 
 function extraRules(){
   //For rare case, when operating with additional crew. This happens when for example 3 class crew set on return sector operates 2 class aircraft 
-
-  
+for (let f=0; f>VCM; f--){
+positions.GR2.main.push(EXTRA[aircraftType].shift())
 }
+}
+
 function VCMrules (){
 //CSA check
 const filteredCrew = crewList.filter( x => 
@@ -763,6 +765,15 @@ function outOfGradeRules (){
       const filterCrew = crewList.filter( x => x.grade === oldGrade);
       filterCrew.sort((a, b) => b.timeInGradeNumber - a.timeInGradeNumber); //most senior crew
       filterCrew[0].grade= newGrade; //moves crew to a new grade
+    }
+    else {//crew pulled out with big grade gap. Only happens to pull as much lower grade
+      let middleGrade = grades[grades.oldGrade - 2];
+      const filterCrew = crewList.filter( x => x.grade === oldGrade);
+      filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
+      filterCrew[0].grade= middleGrade; 
+      const filterMiddleCrew = crewList.filter( x => x.grade === middleGrade);
+      filterMiddleCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
+      filterMiddleCrew[0].grade= newGrade; 
     }
     outOfGrade.oldGrade ++;
     outOfGrade.newGrade --;
