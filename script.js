@@ -545,10 +545,10 @@ function loadCrew (){
   crewList = [];
 let crew= [];
 crew = doc.getElementsByClassName('crew-card')
+let counter=1;//counld not get id of items in HTMLcollection properly, so added thsi ocunter for simple sorting later
 for (let n of crew){
-
 const nickname = n.getElementsByClassName('nickname')[0].innerHTML
-const id = n.getElementsByClassName('id')[0].innerHTML.slice(1)
+const staffNumber = n.getElementsByClassName('id')[0].innerHTML.slice(1)
 const fullname = n.getElementsByClassName('fullname')[0].innerHTML
 const grade = n.getElementsByClassName('grade')[0].innerHTML
 const content = n.getElementsByClassName('crew-content')[0].innerHTML
@@ -620,23 +620,26 @@ if (n.getElementsByClassName("comment").length >= 1) {
 comment = n.getElementsByClassName("comment")[0].innerHTML;
 }
 
+let count = counter;
+
 crewList.push({
+  count,
   grade,
   nickname,
   fullname,
   nationality,
   ratingIR,
   comment,
-  id,
+  staffNumber,
   languages,
   timeInGrade,
   timeInGradeNumber,
   inflightRetail: false,
   ... positionsObject
   }) 
-
-}
-
+counter++;
+}//for n of crew
+// console.log(crewList)
 }
   const loadNumberOfSectors = () => {
     const m = document.querySelector("#numberOfSectors").value;
@@ -648,20 +651,74 @@ crewList.push({
         positionsObject[`break${i}`]="";
       }
     }
-    console.log(m)
   }
 const breaksLoad = () => {
   const k = document.querySelector("#breaks").checked;
-  hasBreaks=k;
-console.log(k)};
+  hasBreaks=k;};
+
+
+
+
+
 function generate () {
   breaksLoad();
   loadNumberOfSectors();
   loadCrew();
   loadPositions(aircraftType);
+  console.log(positionsObject)
   selectIR();
   for (let s=1; s<=numberOfSectors; s++){
     selectPositions(s)
   }
-  console.log(crewList)
+  // console.log(crewList)
+  createOutput();
+}
+
+
+function createOutput () {
+  crewList.sort((a, b) => a.count - b.count);
+  let headerInsert = "";
+
+for (const s of Object.keys(positionsObject)){
+headerInsert+=`<th>${s}</th>`
+}
+  const header = `
+  <table border="1">  <!--border="1"-->
+    <tr>
+      <th>Grade</th>
+      <th>Nickname</th>
+${headerInsert}
+      <th>Full name</th>
+      <th>Staff number</th>
+      <th>Nationality</th>
+      <th>Languages</th>
+      <th>Time in grade</th>
+      <th>Rating DF</th>
+      <th>Comment</th>
+    </tr>`;
+const footer = `</table>`;
+let fileContent = "";
+let lastGrade = ""; 
+crewList.forEach(createTable); 
+function createTable(item, index) {
+  if (lastGrade == "") {
+    // item.grade = "PUR"; // добавляет мне праивльный грейд
+    // далее код добавляет рядки-разделители разных кабин
+    fileContent += `<tr><td class="centerCell"colspan="11" style="background-color:#F7DC6F"><b>Seniors</b></td></tr>`;
+  }
+  if (lastGrade !== item.grade && item.grade == "GR1") {
+    fileContent += `<tr class="CSA"><td class="centerCell" colspan="11" style="background-color:#5DADE2"><b>Business class</b></td></tr>`;
+  }
+  if (lastGrade !== item.grade && item.grade == "FG1") {
+    fileContent += `<tr><td class="centerCell" colspan="11" style="background-color:#EC7063"><b>First class</b></td></tr>`;
+  }
+  if (lastGrade !== item.grade && item.grade == "GR2") {
+    fileContent += `<tr><td class="centerCell" colspan="11" style="background-color:#52BE80"><b>Economy class class</b></td></tr>`;
+  }
+
+  fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td><td><div contenteditable>${item.position1}</div></td><td><div contenteditable>${item.position2}</div></td><td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+  lastGrade = item.grade;
+}//createTable
+let g = header + fileContent + footer;
+document.querySelector("#output").innerHTML = g;
 }
