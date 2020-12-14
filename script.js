@@ -45,10 +45,13 @@ function selectPositions (s){
               if (type === "galley"){
                           positionsActive[grade][type].forEach((position)=>{
                             const filteredCrew = crewList.filter( x => 
-                            x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="");
+                            x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true);
                             if (filteredCrew.length > 1){filteredCrew.pop()}//Removes most junior crew - to ensure CSA position given to most junior crew if available
                             let w = filteredCrew.length;
-                            filteredCrew[getRandomNumber(0, w-1)][`position${s}`] = position; 
+                            let q = getRandomNumber(0, w-1);
+                            filteredCrew[q][`position${s}`] = position; 
+                            filteredCrew[q].lastPosition.push(position); 
+                            filteredCrew[q].lastPosition.shift(); 
                         })//position
               }
               else {
@@ -58,12 +61,18 @@ function selectPositions (s){
                                   x.grade === grade && x[`position${s}`]==="");
                                   filteredCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
                                   filteredCrew[0][`position${s}`] = position;
+                                  filteredCrew[0].lastPosition.push(position); 
+                                  filteredCrew[0].lastPosition.shift(); 
                               }
                               else{
                                 const filteredCrew = crewList.filter( x => 
-                                  x.grade === grade && x[`position${s}`]==="");
+                                  x.grade === grade && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true);
                                   let w = filteredCrew.length;
-                                  filteredCrew[getRandomNumber(0, w-1)][`position${s}`] = position; 
+                                  console.log(w)
+                                  let q = getRandomNumber(0, w-1);
+                                  filteredCrew[q][`position${s}`] = position; 
+                                  filteredCrew[q].lastPosition.push(position); 
+                                  filteredCrew[q].lastPosition.shift(); 
                               }
                         })//position 
               }
@@ -74,6 +83,7 @@ function selectPositions (s){
 })//type
     }//if grade = extra
   }  )//positionActive
+  console.log(crewList)
 }
 
 
@@ -585,10 +595,7 @@ const flag = content.substring(
   content.indexOf(`<img src="https://emiratesgroup.sharepoint.com/sites/ccp/Shared Documents/ACI/country/`) +10,
   content.indexOf(`.png" alt="" data-themekey="#">  </p>      <p class="break"><b>Languages:</b>`)+4
 ) 
-console.log(flag)
-const nationality =
-
-content.substring(
+const nationality =content.substring(
   content.indexOf("ality:</b>")+10,
   content.indexOf(`&nbsp;`)
 )
@@ -647,6 +654,14 @@ comment = n.getElementsByClassName("comment")[0].innerHTML;
 
 let count = counter;
 
+let lastPosition;
+if (grade === "PUR" || grade === "CSA" ){//previous position length=0 so any position can be repeated
+lastPosition = []}
+else if (grade === "GR1" || grade === "FG1" || grade === "CSV"){//one previous position shoul not be repeated
+lastPosition = [""]}
+else { //for Gr2 two previous positions should not be repeated
+lastPosition = ["", ""]
+}
 crewList.push({
   count,
   grade,
@@ -660,6 +675,7 @@ crewList.push({
   languages,
   timeInGrade,
   timeInGradeNumber,
+  lastPosition,
   inflightRetail: false,
   ... positionsObject
   }) 
@@ -777,7 +793,8 @@ fileContentInsert+=`<td><div contenteditable>${item["position"+s]}</div></td>`;
     }
 
 }
-  fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+  fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+  // fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
   lastGrade = item.grade;
 }//createTable
 let g = header + fileContent + footer;
