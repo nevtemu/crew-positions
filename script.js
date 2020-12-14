@@ -4,6 +4,7 @@ let field2 = document.getElementById("select3");
 let field1 = document.getElementById("select2");
 let positions;
 let VCM=0;
+let outOfGrade = {};
 
 let data;
 let crewList = [];
@@ -20,7 +21,15 @@ document.getElementById('dataLength').innerHTML = input.length;
 
 }
 
-
+const EXTRA = {
+  A380_3class_ULR: ["MR3A"],
+  A380_3class_nonULR: ["MR3A", "MR2A"],
+  A380_2class_ULR: ["MR3A", "MR2A", "ML4A", "MR4A"],
+  A380_2class_nonULR: ["MR3A", "MR2A", "ML4A", "MR4A"],
+  B773_2class: ["R5A"],
+  B773_3class: ["R5A"],
+  B772: ["R4A"]
+}
 
 
 function selectIR (){
@@ -215,7 +224,8 @@ if (crewList.length !== positionsList.length) {
 
 function extraRules(){
   //For rare case, when operating with additional crew. This happens when for example 3 class crew set on return sector operates 2 class aircraft 
-  //placeholder
+
+  
 }
 function VCMrules (){
 //CSA check
@@ -421,8 +431,8 @@ const A380_3class_ULR = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at ML2A
-  EXTRA: ["MR3A"]
+  } //seats at ML2A
+
 };
 const A380_3class_nonULR = {
   PUR: {
@@ -448,8 +458,7 @@ const A380_3class_nonULR = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at ML2A
-  EXTRA: ["MR3A", "MR2A"]
+  } //seats at ML2A
 };
 const A380_2class_ULR = {
   PUR: {
@@ -471,8 +480,8 @@ const A380_2class_ULR = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at ML2A, temporary available on all flights during COVID
-  EXTRA: ["MR3A", "MR2A", "ML4A", "MR4A"]
+  } //seats at ML2A, temporary available on all flights during COVID
+  
 };
 const A380_2class_nonULR = {
   PUR: {
@@ -494,8 +503,7 @@ const A380_2class_nonULR = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at ML2A, temporary available on all flights during COVID
-  EXTRA: ["MR3A", "MR2A", "ML4A", "MR4A"]
+  } //seats at ML2A, temporary available on all flights during COVID
 };
 const B773_2class = {
   PUR: {
@@ -517,8 +525,7 @@ const B773_2class = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at R5C, temporary available on all flights during COVID
-  EXTRA: ["R5A"]
+  } //seats at R5C, temporary available on all flights during COVID
 };
 const B773_3class = {
   PUR: {
@@ -544,9 +551,7 @@ const B773_3class = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at R5C, temporary available on all flights during COVID
-  // EXTRA: {
-  //   main: ["R5A"]}
+  } //seats at R5C, temporary available on all flights during COVID
 };
 const B772 = {
   PUR: {
@@ -568,8 +573,7 @@ const B772 = {
   CSA: {
     galley: [],
     main: ["CSA"]
-  }, //seats at R4C, temporary available on all flights during COVID
-  EXTRA: ["R4A"]
+  } //seats at R4C, temporary available on all flights during COVID
 };
 const B773_cargoModified_nonULR = {
   CREW: ["L1", "L2", "R5"],
@@ -723,11 +727,62 @@ const breaksLoad = () => {
 
 
 
+
+
+
+
+
+function checkOutOfGrade (){
+    Object.keys(positions).forEach((grade)=>{
+    let positionsList = [];
+    if (grade != "EXTRA"){
+      Object.keys(positions[grade]).forEach((group)=>{
+        positions[grade][group].forEach((item)=>{
+                  positionsList.push(item)}
+          )
+    });
+    }
+    const filterCrew = crewList.filter( x => x.grade === grade);
+    let u = filterCrew.length - positionsList.length;
+    if (u !== 0){outOfGrade.grade = u}
+})
+if (Object.keys(outOfGrade).length > 0){outOfGradeRules()}
+}
+
+function outOfGradeRules (){
+  const grades = {"PUR": 5, "CSV":4, "FG1": 3, "GR1":2,"GR2": 1}
+  do{
+    let oldGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] > 0);
+    let newGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] < 0);
+    if (grades.oldGrade - grades.newGrade <= 2 && grades.oldGrade - grades.newGrade > 0){ // Crew pulled as lower grade
+      const filterCrew = crewList.filter( x => x.grade === oldGrade);
+      filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
+      filterCrew[0].grade= newGrade; //moves crew to a new grade
+    }
+    else if (grades.oldGrade - grades.newGrade >= -1 && grades.oldGrade - grades.newGrade < 0){ // Crew pulled as higher grade
+      const filterCrew = crewList.filter( x => x.grade === oldGrade);
+      filterCrew.sort((a, b) => b.timeInGradeNumber - a.timeInGradeNumber); //most senior crew
+      filterCrew[0].grade= newGrade; //moves crew to a new grade
+    }
+    outOfGrade.oldGrade ++;
+    outOfGrade.newGrade --;
+  } while (Object.values(outOfGrade).reduce((a, b) => a + b) !== 0)
+
+
+  
+}
+
+
+
+
+
+
 function generate () {
   breaksLoad();
   loadNumberOfSectors();
   loadCrew();
   loadPositions(aircraftType);
+  checkOutOfGrade();
   selectIR();
   for (let s=1; s<=numberOfSectors; s++){
     selectPositions(s)
