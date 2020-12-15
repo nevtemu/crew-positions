@@ -520,6 +520,10 @@ const B773_2class = {
     galley: [],
     main: ["L5"]
   },
+  FG1: {
+    galley: [],
+    main: []
+  },
   GR1: {
     galley: ["L1A"],
     main: ["L1", "R1"]
@@ -567,6 +571,10 @@ const B772 = {
   CSV: {
     galley: [],
     main: ["L4"]
+  },
+  FG1: {
+    galley: [],
+    main: []
   },
   GR1: {
     galley: ["L1A"],
@@ -734,28 +742,30 @@ function checkOutOfGrade (){
     
     const filterCrew = crewList.filter( x => x.grade === grade);
     let u = filterCrew.length - positionsList.length;
-    if (u !== 0){outOfGrade.grade = u}
+    if (u !== 0){outOfGrade[grade] = u}
 })
 if (Object.keys(outOfGrade).length > 0){outOfGradeRules()}
 }
 
 function outOfGradeRules (){
-  const grades = {"PUR": 5, "CSV":4, "FG1": 3, "GR1":2,"GR2": 1}
+  const grades = {"PUR": 5, "CSV":4, "FG1": 3, "GR1":2,"GR2": 1, "CSA":0}
   do{
     let oldGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] > 0);
     let newGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] < 0);
-    if (grades.oldGrade - grades.newGrade <= 2 && grades.oldGrade - grades.newGrade > 0){ // Crew pulled as lower grade
+    if (grades[oldGrade] - grades[newGrade] <= 2 && grades[oldGrade] - grades[newGrade] > 0){ // Crew pulled as lower grade
       const filterCrew = crewList.filter( x => x.grade === oldGrade);
       filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
       filterCrew[0].grade= newGrade; //moves crew to a new grade
+      console.log(oldGrade, newGrade)
     }
-    else if (grades.oldGrade - grades.newGrade >= -1 && grades.oldGrade - grades.newGrade < 0){ // Crew pulled as higher grade
+    else if (grades[oldGrade] - grades[newGrade] >= -1 && grades[oldGrade] - grades[newGrade] < 0){ // Crew pulled as higher grade
       const filterCrew = crewList.filter( x => x.grade === oldGrade);
       filterCrew.sort((a, b) => b.timeInGradeNumber - a.timeInGradeNumber); //most senior crew
       filterCrew[0].grade= newGrade; //moves crew to a new grade
+      console.log(oldGrade, newGrade)
     }
     else {//crew pulled out with big grade gap. Only happens to pull as much lower grade
-      let middleGrade = grades[grades.oldGrade - 2];
+      let middleGrade = Object.keys(grades).find(key => grades[key] === grades[oldGrade] - 2);
       const filterCrew = crewList.filter( x => x.grade === oldGrade);
       filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
       filterCrew[0].grade= middleGrade; 
@@ -763,9 +773,9 @@ function outOfGradeRules (){
       filterMiddleCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
       filterMiddleCrew[0].grade= newGrade; 
     }
-    outOfGrade.oldGrade ++;
-    outOfGrade.newGrade --;
-  } while (Object.values(outOfGrade).reduce((a, b) => a + b) !== 0)
+    outOfGrade[oldGrade] --;
+    outOfGrade[newGrade] ++;
+  } while (Object.values(outOfGrade).reduce((a, b) => a + Math.abs(b)) !== 0)
 
 
   
