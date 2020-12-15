@@ -1,1 +1,194 @@
-<mxfile host="app.diagrams.net" modified="2020-12-14T15:19:42.304Z" agent="5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36" etag="AXKXVB8SnyYg_D-67M_O" version="13.10.8" type="github"><diagram id="ETnIYjaObU7MtxRX93nT" name="Page-1">7Vpbd6M2EP41Pqd98B4uNiGPjTfbtE3anibtNvvSI2AAJTJihYjt/vqOhDAQ24mTDb705MWWRhdmNKPvGyEG7mQ6/1GQPL3iEbCBY0Xzgftx4Di+5+OvEiwqge3Zp5UkETQyskZwTf8FI7SMtKQRFJ2OknMmad4VhjzLIJQdGRGCz7rdYs66T81JAiuC65CwVelnGsnU2OWcNPILoElaP9n2jH1TUnc2lhQpifisJXLPB+5EcC6r0nQ+AaYWr16XatynDa1LxQRkcpsB/vzLr/5PP99/+TO7+OXWhsnIYUPbNcrJRW0xRLgApsqFTHnCM8LOG+mZ4GUWgZrWwlrT55LzHIU2Cu9AyoXxJiklR1Eqp8y0wpzKv9XwD2NTu221fJybmXVlUVcyKRbVIGdc12/bjc04XasHVgYqqzYunBEVvBSh6fWHV34ehjcynv2z+Bpe/XXnuVfDOgCJSEA+saqnS/fivgA+BdQHxwlgRNKHrh7EBGiy7Nf4EAvGjS9x6Wi/LnVe5VO349Oh9cHCLfa0Y3XtdxAU1w3E/rw92pG3n1LygbDSPGngeAzVPQuwkEi9JJUg5rgC7bjwvpa8bhgW2rM/YAd7lM+bxnqWiEhSz4SaVpN1H4DilYcG4nlJRB/W6iVhLoeE0SSrFGMQy1XF6lmKnGS1bCJgplinq3O7R0usH9+7RjynuL9QiRCJMldFKxZ8in8zCAoq4VAUVUWrLMCsX0B0UcDXEgoVPzQrJJDoheo+QqQGbxRCzFK0/zonejvOcH262BJTxiaccaHHuhEBPw6V2lLwe2i1eKEPQaxaaq5Vw4t7kGFq8CFhpCg6WLEGGh5A4AK2RKu727SODLmb9GZY12dNrrBMANJOnmD1BP/LdOOYGH0HhL4ZureA+PE+CX3UA8SP10E84yRSyPnd90cD9Oj0Ao8HjnVxc3WpooLBFLTCL8fSdT3fXuNQAJFtlUPOGJ5cKFe4y2MlQR8MQyKi4lV2bOi8G/MQyIWxT6YIK0n6yMS3M6iHaCoZKwzZUaE5+hUpxBtSXRzHTriW6iIv8MbeC6luhdfWoOZGqrO7VLektTbVjXZKdeONwPhtOLgCr2pDXtKiDSsr+LcBKp+CRSIEWdSbngd3uEUKvaAyNSigAhAkoSoqDzeD+qawcrph5fqrYWWfrgsrq6+wsp29ZlCt/KnJpp7JoOxO/tSkU/1nUN4xvBLxdgUUhAo83sXyZpHDG4NFf6wXQUwzzdhUARHVh7xCx0NRQJaAUPCkfjAnSbiq5Irkkc5fl6D0klQprMw5HqQrtXB6Liqjsja6ftKg24LZrsusjEzhpVb9T5HZe8T4tjPekvGd3qDZXlntwz/cnuzrdHtyDNh8sitszsppAOK3+BqBgIv2Hj9seKaZhAqDZUr0gqTqVguhShtU54/Filn7BOSy0KcnyTWh6CMhluIyC2t8NsYkkNWtbfQOuRDqOu+xlZK+w/MGeB6628Jzbwcy+/3d4/bo7B8DOvu7QueUFGcCyD0cDzAHnDPQtyUPRFASsEO5wql6Ip5KDEpK2BKIs5CVEejSMGYaERwrUMveIHH1HhJjS4HuQZijeUKmtMrq1fca5pCSAsuVkGdsUdvY4hOYSiWOKbBoeRCQyk9qMMkUQaFSguD/PSyWXZq3Pc2x4Z1wkExOn7/scq3dngf891c1WxPO6ZaEs6vvGZ5Ssv/LrhooDvSya0o0FtUZ8w6gJvZDWH/XEPjj0djaJdS4j94K226Plw1Ybb7C022tbxnd8/8A</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2020-12-14T16:08:08.348Z" agent="5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36" etag="R8ylKXYkUGN6NaJZQ43X" version="13.10.8" type="github">
+  <diagram id="ETnIYjaObU7MtxRX93nT" name="Page-1">
+    <mxGraphModel dx="868" dy="1619" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.004;entryY=0.445;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" parent="1" source="R6uW-cTtfw_yqcMVj63M-1" target="8xZN8IJkZUnHKY1eC42l-4" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="95" y="319" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="R6uW-cTtfw_yqcMVj63M-1" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px&quot;&gt;data&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;Crew data&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;Copied/scrapped from website&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;Can use database request instead&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;shadow=1;sketch=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="40" y="190" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="8xZN8IJkZUnHKY1eC42l-4" target="ATyMse0KJxK7ReyLEJo9-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="8xZN8IJkZUnHKY1eC42l-4" target="ATyMse0KJxK7ReyLEJo9-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="8xZN8IJkZUnHKY1eC42l-4" target="8xZN8IJkZUnHKY1eC42l-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-4" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;loadCrew()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;parses HTML element&lt;/span&gt;&lt;/div&gt;&lt;span&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;creates HTML collection of crew-cards&lt;/span&gt;&lt;/div&gt;&lt;/span&gt;&lt;span&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;iterates through collection&lt;/span&gt;&lt;/div&gt;&lt;/span&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;pulls required data&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="300" y="270" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-5" value="&lt;font style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;crewList&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;br&gt;array of objects with crew details" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;shadow=1;sketch=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="350" width="190" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="8xZN8IJkZUnHKY1eC42l-6" target="8xZN8IJkZUnHKY1eC42l-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="8xZN8IJkZUnHKY1eC42l-6" target="ATyMse0KJxK7ReyLEJo9-8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="520" />
+              <mxPoint x="780" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.904;entryY=-0.045;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" edge="1" parent="1" source="8xZN8IJkZUnHKY1eC42l-6" target="ATyMse0KJxK7ReyLEJo9-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="520" />
+              <mxPoint x="237" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-6" value="&lt;font style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;aircraftType&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;defines if it is passenger or cargo operations&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;crew positions stores in objects/arrays with aircraftType names&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;shadow=1;sketch=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="610" y="125" width="240" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;dashed=1;" parent="1" source="8xZN8IJkZUnHKY1eC42l-7" target="8xZN8IJkZUnHKY1eC42l-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-7" value="&lt;font style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;numberOfSectors&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;integer that shows number of sectors&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;used to iterate functions that generate positions correct number of times&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;shadow=1;sketch=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="610" y="-35" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;" parent="1" source="8xZN8IJkZUnHKY1eC42l-8" target="8xZN8IJkZUnHKY1eC42l-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-8" value="&lt;font style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;hasBreakes&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;boolean variable&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;left potential to include in-flight break generation later&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;span&gt;at this stage it helps only to generate emty fields in tablet and extra keys in crewList objects&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;shadow=1;sketch=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="290" y="-40" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="8xZN8IJkZUnHKY1eC42l-9" target="8xZN8IJkZUnHKY1eC42l-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8xZN8IJkZUnHKY1eC42l-9" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;generate()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;main function&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;shadow=1;sketch=0;glass=0;" parent="1" vertex="1">
+          <mxGeometry x="320" y="130" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-1" target="ATyMse0KJxK7ReyLEJo9-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-1" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;loadPositionsCargo()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;positions for cargo flights stored in arrays&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;since they are grade-independent&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="560" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-2" target="ATyMse0KJxK7ReyLEJo9-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="960" />
+              <mxPoint x="280" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-2" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;selectPositionsCargo()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;iterates through array of positions and allocates them to cabin crew. Non-conditional&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="710" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-6" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;createOutput()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;generates HTML table with crew information and allocated positions&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="160" y="1550" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-8" target="ATyMse0KJxK7ReyLEJo9-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-8" target="ATyMse0KJxK7ReyLEJo9-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-8" target="ATyMse0KJxK7ReyLEJo9-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-8" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;loadPositions()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;positions for passenger flights stored in objects&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;runs VCM check to ensure enough crew rostered for duty&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="600" y="560" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-17" target="ATyMse0KJxK7ReyLEJo9-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-17" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;VCMrules()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;if crew number less that required positions, adjusts positions object accordingly&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;first checks if CSA is available&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;then follows VCM rules (described in file VCMrules.xlsx)&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="730" width="310" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-18" target="ATyMse0KJxK7ReyLEJo9-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-18" target="ATyMse0KJxK7ReyLEJo9-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-18" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;checkOutOfGrade()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;checks if any grades have shortage or extar crew&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="600" y="890" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-19" target="ATyMse0KJxK7ReyLEJo9-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-19" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;extraRules()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;if crew number more that required positions, adds positions from EXTRA object into positions object&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="360" y="730" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-25" target="ATyMse0KJxK7ReyLEJo9-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-25" target="ATyMse0KJxK7ReyLEJo9-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-25" target="ATyMse0KJxK7ReyLEJo9-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-25" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;outOfGradeRules()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;creates object to identify excess and shortages of crew between grades&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="910" y="1040" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-26" target="ATyMse0KJxK7ReyLEJo9-39">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-26" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;selectIR()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;selects one crew for B777 and two crew for A380 with highest inflight retail rating and set parameter to true&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;since now anyone can do inflight retail it was implimented this way and not as separate position&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="490" y="1360" width="270" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-29" target="ATyMse0KJxK7ReyLEJo9-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-29" value="&lt;b style=&quot;font-size: 15px&quot;&gt;Crew pulled 1 grade higher&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;selects most senior crew and change his grade to higher grade&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1200" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-30" target="ATyMse0KJxK7ReyLEJo9-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-30" value="&lt;b style=&quot;font-size: 15px&quot;&gt;Crew pulled more than 2 grades lower&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;selects most junior crew 2 grades lower (middle crew) and move him to lowest grade, higher grade crew take his place in middle grade&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="910" y="1200" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-31" target="ATyMse0KJxK7ReyLEJo9-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-31" value="&lt;span style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;Crew pulled less than 2 grades lower&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;selects most junior crew and change his grade to lower grade&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1200" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-39" target="ATyMse0KJxK7ReyLEJo9-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-39" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px&quot;&gt;selectPositions()&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;generates positions for passenger flights&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;main&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="480" y="1535" width="270" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-48" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-40" target="ATyMse0KJxK7ReyLEJo9-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-40" target="ATyMse0KJxK7ReyLEJo9-44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="ATyMse0KJxK7ReyLEJo9-40" target="ATyMse0KJxK7ReyLEJo9-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-40" value="&lt;span style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;Pre-allocated positions check&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;this feature needed in case of implimentation of manual position allocation by CPM. This will find all crew with allocated positions and remove those positions from crew list&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="505" y="1699" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-41" value="&lt;span style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;VCM check&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;selects most junior crew and change his grade to lower grade&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="670" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-42" value="&lt;span style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;Galley positions&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;galley must be operated by experienced crew (more than 6 month in grade). That is why in positions objects galley positions kept separate&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;crew selected based on: grade, expereince, no allocated position and no inflight retail, not done this position last sector&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="240" y="1840" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-43" value="&lt;span style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;CSA role&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;in case if CSA duties performed by Gr2 this must be done by most junior crew member.&amp;nbsp;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="1840" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ATyMse0KJxK7ReyLEJo9-44" value="&lt;span style=&quot;font-size: 15px&quot;&gt;&lt;b&gt;Other positions&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left&quot;&gt;all other positions given randomly to crew&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;however, for purpose of rotation previous positions taken into account and must not be repeated&lt;/div&gt;&lt;div style=&quot;text-align: left&quot;&gt;crew selected based on: grade,&amp;nbsp; no allocated position, not done this position last sector&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1;sketch=0;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="790" y="1840" width="240" height="110" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
