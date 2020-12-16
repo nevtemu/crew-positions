@@ -1,40 +1,31 @@
-let aircraftType = "";
-let type1, type2, type3;
-let field2 = document.getElementById("select3");
-let field1 = document.getElementById("select2");
+let data;
+let crewList = [];
 let positions;
 let VCM=0;
 let outOfGrade = {};
-
-let data;
-let crewList = [];
 let numberOfSectors=1, positionsObject = {position1: ""};
 let hasBreaks = false;
 
-//----Crew data, flight data
-const dataStats = (input) => {
-data = input;
-document.getElementById('dataLength').innerHTML = input.length;
-
-
-
-
+function generate () { //main function
+    loadBreakes();
+    loadNumberOfSectors();
+    loadCrew();
+    if (aircraftType.includes("cargo")){
+        loadPositionsCargo();
+        selectPositionsCargo();
+    }
+    else {
+        loadPositions(aircraftType);
+        checkOutOfGrade();
+        selectIR();
+        for (let s=1; s<=numberOfSectors; s++){
+            selectPositions(s);
+        }//end for
+    }//end else
+    createOutput();
 }
 
-const EXTRA = {
-  A380_3class_ULR: ["MR3A"],
-  A380_3class_nonULR: ["MR3A", "MR2A"],
-  A380_2class_ULR: ["MR3A", "MR2A", "ML4A", "MR4A"],
-  A380_2class_nonULR: ["MR3A", "MR2A", "ML4A", "MR4A"],
-  B773_2class: ["R5A"],
-  B773_3class: ["R5A"],
-  B772: ["R4A"],
-  B773_cargo_ULR: ["L3", "L4", "R4", "R3", "L5", "R5"],
-  B773_cargo_ETOPS: ["R2", "L3", "L4", "R4", "R3", "L5", "R5"],
-  B773_cargo_nonULR: ["L2", "R2", "L3", "L4", "R4", "R3", "L5", "R5"],
-  B773_cargoModified_ULR: ["R1", "R2", "L3", "L4", "R4", "R3"],
-  B773_cargoModified_nonULR: ["R1", "R2", "L3", "L4", "R4", "R3", "L5"]
-}
+
 
 
 function selectIR (){
@@ -44,9 +35,7 @@ function selectIR (){
     crewList[i].inflightRetail = true;
   }
 }
-function crewFilter(grade, timeInGradeNumber, position){
 
-}
 
 
 function selectPositions (s){
@@ -124,81 +113,7 @@ function selectPositions (s){
 
 
 
-//----Aircraft type selectors
-const aircraftSelection1 = (type) => {
-  field2.innerHTML = ``;
-  type1 = type;
-  switch (type) {
-    case "A380":
-      field1.innerHTML =
-        `<select name="aircraftType2" id="aircraftType2" onchange="aircraftSelectionA380(this.value)">
-        <option value="1" disabled="" selected="" hidden>Select type</option>
-      <option value="_3class">3 class</option>
-      <option value="_2class">2 class</option>
-    </select>`;
-      break;
-    case "B772":
-      field1.innerHTML = ``;
-      aircraftType = type;
-// loadPositions(aircraftType);
-      break;
-    case "B773":
-      field1.innerHTML =
-        `<select name="aircraftType2" id="aircraftType2" onchange="aircraftSelectionB773(this.value)">
-        <option value="1" disabled="" selected="" hidden>Select type</option>
-    <option value="_3class">3 class</option>
-    <option value="_2class">2 class</option>
-    <option value="_cargo">Cargo</option>
-    <option value="_cargoModified">Cargo modified cabin</option>
-  </select>`;
-      break;
-    default:
-      console.log("Aircraft type selected incorrectly !");
-      break;
-  }
-}
-const aircraftSelectionA380 = (type) => {
-  type2 = type;
-  field2.innerHTML =
-    `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
-    <option value="1" disabled="" selected="" hidden>Select type</option>
-        <option value="_ULR">ULR</option>
-        <option value="_nonULR">nonULR</option>
-      </select>`;
-}
-const aircraftSelectionB773 = (type) => {
-  type2 = type;
-  switch (type) {
-    case "_2class":
-    case "_3class":
-      field2.innerHTML =``;
-      aircraftType = type1+type2;
-// loadPositions(aircraftType);
-      break;
-    case "_cargoModified":
-      field2.innerHTML =
-        `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
-        <option value="1" disabled="" selected="" hidden>Select type</option>
-            <option value="_ULR">ULR</option>
-            <option value="_nonULR">nonULR</option>
-          </select>`;
-      break;
-    case "_cargo":
-      field2.innerHTML =
-        `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
-        <option value="1" disabled="" selected="" hidden>Select type</option>
-            <option value="_ULR">ULR</option>
-            <option value="_ETOPS">ETOPS, over 5 hours</option>
-            <option value="_nonULR">nonULR</option>
-          </select>`;
-      break;
-  }
-}
-const aircraftSelection3 = (type) => {
-  type3 = type;
-  aircraftType = type1 + type2 + type3;
-  // loadPositions(aircraftType)
-}
+
 const loadPositions = (aType) => {
   positions = { ...eval(aType) };
 
@@ -409,191 +324,7 @@ const filteredCrew = crewList.filter( x =>
   // console.log(positions)
 }
 
-// order positions matter - more important first
-// how to make sure doors covered
-// DF used to be separate category but removed since new procedure is assign to top seller
-// add field CSA:true DF:true
-const A380_3class_ULR = {
-  PUR: {
-    galley: [],
-    main: ["PUR"]
-  },
-  CSV: {
-    galley: [],
-    main: ["ML5", "UL1A", "ML1"]
-  },
-  FG1: {
-    galley: ["MR2A"],
-    main: ["UR1", "UL1"]
-  },
-  GR1: {
-    galley: ["ML3A"],
-    main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]
-  },
-  GR2: {
-    galley: ["ML2", "MR4"],
-    main: ["MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]
-  },
-  CSA: {
-    galley: [],
-    main: ["CSA"]
-  } //seats at ML2A
 
-};
-const A380_3class_nonULR = {
-  PUR: {
-    galley: [],
-    main: ["PUR"]
-  },
-  CSV: {
-    galley: [],
-    main: ["ML5", "UL1A"]
-  },
-  FG1: {
-    galley: ["UL1"],
-    main: ["UR1"]
-  },
-  GR1: {
-    galley: ["ML3A"],
-    main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]
-  },
-  GR2: {
-    galley: ["ML2", "MR4"],
-    main: ["ML1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]
-  },
-  CSA: {
-    galley: [],
-    main: ["CSA"]
-  } //seats at ML2A
-};
-const A380_2class_ULR = {
-  PUR: {
-    galley: [],
-    main: ["PUR"]
-  },
-  CSV: {
-    galley: [],
-    main: ["ML5", "UL1A", "ML1"]
-  },
-  GR1: {
-    galley: ["ML3A"],
-    main: ["UL2", "UR2", "UL3", "UR3", "UR1A"]
-  },
-  GR2: {
-    galley: ["UC1", "ML2", "MR4"],
-    main: ["UR1", "UL1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]
-  },
-  CSA: {
-    galley: [],
-    main: ["CSA"]
-  } //seats at ML2A, temporary available on all flights during COVID
-  
-};
-const A380_2class_nonULR = {
-  PUR: {
-    galley: [],
-    main: ["PUR"]
-  },
-  CSV: {
-    galley: [],
-    main: ["ML5", "UL1A"]
-  },
-  GR1: {
-    galley: ["ML3A"],
-    main: ["UL2", "UR2", "UL3", "UR3", "UR1A"]
-  },
-  GR2: {
-    galley: ["UC1", "ML2", "MR4"],
-    main: ["UR1", "UL1", "ML1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]
-  },
-  CSA: {
-    galley: [],
-    main: ["CSA"]
-  } //seats at ML2A, temporary available on all flights during COVID
-};
-const B773_2class = {
-  PUR: {
-    galley: [],
-    main: ["PUR"]
-  },
-  CSV: {
-    galley: [],
-    main: ["L5"]
-  },
-  FG1: {
-    galley: [],
-    main: []
-  },
-  GR1: {
-    galley: ["L1A"],
-    main: ["L1", "R1"]
-  }, // L1A seated at R1A
-  GR2: {
-    galley: ["R5", "L5A"],
-    main: ["L2", "L3", "L4", "R4", "R3", "R2"]
-  },
-  CSA: {
-    galley: [],
-    main: ["CSA"]
-  } //seats at R5C, temporary available on all flights during COVID
-};
-const B773_3class = {
-  PUR: {
-    galley: [],
-    main: ["PUR"]
-  },
-  CSV: {
-    galley: [],
-    main: ["L5", "R2A"]
-  },
-  FG1: {
-    galley: ["L1"],
-    main: ["R1"]
-  },
-  GR1: {
-    galley: ["L2A"],
-    main: ["L2", "R2"]
-  },
-  GR2: {
-    galley: ["R5", "L5A"],
-    main: ["L3", "L4", "R4", "R3"]
-  },
-  CSA: {
-    galley: [],
-    main: ["CSA"]
-  } //seats at R5C, temporary available on all flights during COVID
-};
-const B772 = {
-  PUR: {
-    galley: [],
-    main: ["PUR"]
-  },
-  CSV: {
-    galley: [],
-    main: ["L4"]
-  },
-  FG1: {
-    galley: [],
-    main: []
-  },
-  GR1: {
-    galley: ["L1A"],
-    main: ["L1", "R1", "R1A"]
-  }, //L1A seated at L4C
-  GR2: {
-    galley: ["R4", "L4A"],
-    main: ["L3", "L2", "R2", "R3"]
-  },
-  CSA: {
-    galley: [],
-    main: ["CSA"]
-  } //seats at R4C, temporary available on all flights during COVID
-};
-const B773_cargoModified_nonULR = ["L1", "L2", "R5"];
-const B773_cargoModified_ULR = ["L1", "L2", "R5", "L5"];
-const B773_cargo_nonULR = ["L1", "R1"];
-const B773_cargo_ETOPS = ["L1", "R1", "L2"];
-const B773_cargo_ULR = ["L1", "R1", "L2", "R2"];
 
 
 const getRandomNumber = (min, max) =>
@@ -705,22 +436,8 @@ crewList.push({
   }) 
 counter++;
 }//for n of crew
-console.log(crewList)
 }
-  const loadNumberOfSectors = () => {
-    const m = document.querySelector("#numberOfSectors").value;
-    numberOfSectors = m;
-    positionsObject = {}
-    for (let i=1;i<=m;i++){
-      positionsObject[`position${i}`]="";
-      if (hasBreaks){
-        positionsObject[`break${i}`]="";
-      }
-    }
-  }
-const loadBreakes = () => {
-  const k = document.querySelector("#breaks").checked;
-  hasBreaks=k;};
+
 
 
 
@@ -790,24 +507,7 @@ function outOfGradeRules (){
 
 
 
-function generate () {
-  loadBreakes();
-  loadNumberOfSectors();
-  loadCrew();
-  if (aircraftType.includes("cargo")){
-    loadPositionsCargo();
-    selectPositionsCargo();
-  }
-  else{
-  loadPositions(aircraftType);
-  checkOutOfGrade();
-  selectIR();
-  for (let s=1; s<=numberOfSectors; s++){
-    selectPositions(s)
-  }}
-   // console.log(crewList)
-  createOutput();
-}
+
 
 function selectPositionsCargo () {
 positions.forEach((h, index) => crewList[index].position=h)
@@ -919,3 +619,184 @@ function hideShowSettings (){
   document.getElementById("settings").classList.toggle("hidden")
 }
 
+
+
+
+//This block is just HTML generators for drop-down list to select aircraft type. 
+// It can be done easier with React, but did not want to use large library for small task
+let aircraftType = "";
+let type1, type2, type3;
+let field2 = document.getElementById("select3");
+let field1 = document.getElementById("select2");
+
+const aircraftSelection1 = (type) => {
+    field2.innerHTML = ``;
+    type1 = type;
+    switch (type) {
+        case "A380":
+            field1.innerHTML =
+                `<select name="aircraftType2" id="aircraftType2" onchange="aircraftSelectionA380(this.value)">
+                    <option value="1" disabled="" selected="" hidden>Select type</option>
+                    <option value="_3class">3 class</option>
+                    <option value="_2class">2 class</option>
+                </select>`;
+        break;
+        case "B772":
+            field1.innerHTML = ``;
+            aircraftType = type;
+        break;
+        case "B773":
+            field1.innerHTML =
+                `<select name="aircraftType2" id="aircraftType2" onchange="aircraftSelectionB773(this.value)">
+                    <option value="1" disabled="" selected="" hidden>Select type</option>
+                    <option value="_3class">3 class</option>
+                    <option value="_2class">2 class</option>
+                    <option value="_cargo">Cargo</option>
+                    <option value="_cargoModified">Cargo modified cabin</option>
+                </select>`;
+        break;
+        default:
+            console.error("Aircraft type selected incorrectly !");
+        break;
+    }//end switch
+}
+const aircraftSelectionA380 = (type) => {
+    type2 = type;
+    field2.innerHTML =
+        `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
+            <option value="1" disabled="" selected="" hidden>Select type</option>
+            <option value="_ULR">ULR</option>
+            <option value="_nonULR">nonULR</option>
+        </select>`;
+}
+const aircraftSelectionB773 = (type) => {
+    type2 = type;
+    switch (type) {
+        case "_2class":
+        case "_3class":
+            field2.innerHTML =``;
+            aircraftType = type1+type2;
+        break;
+        case "_cargoModified":
+            field2.innerHTML =
+                `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
+                    <option value="1" disabled="" selected="" hidden>Select type</option>
+                    <option value="_ULR">ULR</option>
+                    <option value="_nonULR">nonULR</option>
+                </select>`;
+        break;
+        case "_cargo":
+            field2.innerHTML =
+                `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
+                    <option value="1" disabled="" selected="" hidden>Select type</option>
+                    <option value="_ULR">ULR</option>
+                    <option value="_ETOPS">ETOPS, over 5 hours</option>
+                    <option value="_nonULR">nonULR</option>
+                </select>`;
+        break;
+  }
+}
+const aircraftSelection3 = (type) => {
+    type3 = type;
+    aircraftType = type1 + type2 + type3;
+}
+
+//Other HTML related secondary functions
+const dataStats = (input) => {
+    data = input;
+    document.getElementById('dataLength').innerHTML = input.length;
+}
+function loadNumberOfSectors () {
+    const m = document.querySelector("#numberOfSectors").value;
+    numberOfSectors = m;
+    positionsObject = {}
+    for (let i=1;i<=m;i++){
+        positionsObject[`position${i}`]="";
+        if (hasBreaks){
+            positionsObject[`break${i}`]="";
+        } //end if
+    } //end for
+}
+function loadBreakes () {
+    const k = document.querySelector("#breaks").checked;
+    hasBreaks=k;
+}
+
+//Constants. Ideally should be moved to separate module
+const EXTRA = {
+    A380_3class_ULR: ["MR3A"],
+    A380_3class_nonULR: ["MR3A", "MR2A"],
+    A380_2class_ULR: ["MR3A", "MR2A", "ML4A", "MR4A"],
+    A380_2class_nonULR: ["MR3A", "MR2A", "ML4A", "MR4A"],
+    B773_2class: ["R5A"],
+    B773_3class: ["R5A"],
+    B772: ["R4A"],
+    B773_cargo_ULR: ["L3", "L4", "R4", "R3", "L5", "R5"],
+    B773_cargo_ETOPS: ["R2", "L3", "L4", "R4", "R3", "L5", "R5"],
+    B773_cargo_nonULR: ["L2", "R2", "L3", "L4", "R4", "R3", "L5", "R5"],
+    B773_cargoModified_ULR: ["R1", "R2", "L3", "L4", "R4", "R3"],
+    B773_cargoModified_nonULR: ["R1", "R2", "L3", "L4", "R4", "R3", "L5"]
+}
+// Inflight retail used to be separate category of positions, but removed since new procedure is assign to top seller
+// regardless of grade. 
+const A380_3class_ULR = {//On ULR 2 CSV in YC
+    PUR: {galley: [], main: ["PUR"]},
+    CSV: {galley: [], main: ["ML5", "UL1A", "ML1"]},
+    FG1: {galley: ["MR2A"], main: ["UR1", "UL1"]},
+    GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
+    GR2: {galley: ["ML2", "MR4"], main: ["MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
+    CSA: {galley: [], main: ["CSA"]} //seats at ML2A
+};
+const A380_3class_nonULR = { //9 Gr2s on main deck
+    PUR: {galley: [], main: ["PUR"]},
+    CSV: {galley: [], main: ["ML5", "UL1A"]},
+    FG1: {galley: ["UL1"], main: ["UR1"]},
+    GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
+    GR2: {galley: ["ML2", "MR4"], main: ["ML1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
+    CSA: {galley: [], main: ["CSA"]} //seats at ML2A
+};
+const A380_2class_ULR = {//On ULR 2 CSV in YC
+    PUR: {galley: [], main: ["PUR"]},
+    CSV: {galley: [], main: ["ML5", "UL1A", "ML1"]},
+    FG1: {galley: [], main: []},//empty field required so this grade is not skipped when calculationg outOfGrade()
+    GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A"]},
+    GR2: {galley: ["UC1", "ML2", "MR4"], main: ["UR1", "UL1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
+    CSA: {galley: [], main: ["CSA"]} //seats at ML2A, temporary available on all flights during COVID
+};
+const A380_2class_nonULR = {//9 Gr2s on main deck
+    PUR: {galley: [], main: ["PUR"]},
+    CSV: {galley: [], main: ["ML5", "UL1A"]},
+    FG1: {galley: [], main: []},//empty field required so this grade is not skipped when calculationg outOfGrade()
+    GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A"]},
+    GR2: {galley: ["UC1", "ML2", "MR4"], main: ["UR1", "UL1", "ML1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
+    CSA: {galley: [], main: ["CSA"]} //seats at ML2A, temporary available on all flights during COVID
+};
+const B773_2class = {
+    PUR: {galley: [], main: ["PUR"]},
+    CSV: {galley: [], main: ["L5"]},
+    FG1: {galley: [], main: []},//empty field required so this grade is not skipped when calculationg outOfGrade()
+    GR1: {galley: ["L1A"], main: ["L1", "R1"]}, // L1A seated at R1A
+    GR2: {galley: ["R5", "L5A"], main: ["L2", "L3", "L4", "R4", "R3", "R2"]},
+    CSA: {galley: [], main: ["CSA"]} //seats at R5C, temporary available on all flights during COVID
+};
+const B773_3class = {
+    PUR: {galley: [], main: ["PUR"]},
+    CSV: {galley: [], main: ["L5", "R2A"]},
+    FG1: {galley: ["L1"], main: ["R1"]},
+    GR1: {galley: ["L2A"], main: ["L2", "R2"]},
+    GR2: {galley: ["R5", "L5A"], main: ["L3", "L4", "R4", "R3"]},
+    CSA: {galley: [], main: ["CSA"]} //seats at R5C, temporary available on all flights during COVID
+};
+const B772 = {
+    PUR: {galley: [],main: ["PUR"]},
+    CSV: {galley: [],main: ["L4"]},
+    FG1: {galley: [], main: []},
+    GR1: {galley: ["L1A"], main: ["L1", "R1", "R1A"]}, //L1A seated at L4C
+    GR2: {galley: ["R4", "L4A"], main: ["L3", "L2", "R2", "R3"]},
+    CSA: {galley: [], main: ["CSA"]} //seats at R4C, temporary available on all flights during COVID
+};
+const B773_cargoModified_nonULR = ["L1", "L2", "R5"];
+const B773_cargoModified_ULR = ["L1", "L2", "R5", "L5"];
+const B773_cargo_nonULR = ["L1", "R1"];
+const B773_cargo_ETOPS = ["L1", "R1", "L2"];
+const B773_cargo_ULR = ["L1", "R1", "L2", "R2"];
