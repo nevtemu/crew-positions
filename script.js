@@ -635,7 +635,8 @@ const EXTRA = {
     B773_cargo_ETOPS: ["R2", "L3", "L4", "R4", "R3", "L5", "R5"],
     B773_cargo_nonULR: ["L2", "R2", "L3", "L4", "R4", "R3", "L5", "R5"],
     B773_cargoModified_ULR: ["R1", "R2", "L3", "L4", "R4", "R3"],
-    B773_cargoModified_nonULR: ["R1", "R2", "L3", "L4", "R4", "R3", "L5"]
+    B773_cargoModified_nonULR: ["R1", "R2", "L3", "L4", "R4", "R3", "L5"],
+    A380_cargoInHold: ["MR2", "ML2", "ML2A", "MR2A", "ML3", "MR3", "ML3A", "MR3A", "ML4", "MR4", "ML4A", "MR4A", "ML5", "MR5", "UL1", "UR1", "UR1A", "UL1A", "UL2", "UR2", "UL3", "UR3"]
 }
 // Inflight retail used to be separate category of positions, but removed since new procedure is assign to top seller
 // regardless of grade. 
@@ -700,3 +701,4 @@ const B773_cargoModified_ULR = ["L1", "L2", "R5", "L5"];
 const B773_cargo_nonULR = ["L1", "R1"];
 const B773_cargo_ETOPS = ["L1", "R1", "L2"];
 const B773_cargo_ULR = ["L1", "R1", "L2", "R2"];
+const A380_cargoInHold = ["MR1", "ML1"]
