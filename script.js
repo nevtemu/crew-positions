@@ -1,9 +1,7 @@
-let data;
+let data, positions;
 let crewList = [];
-let positions;
-let VCM=0;
-let outOfGrade = {};
-let numberOfSectors=1, positionsObject = {position1: ""};
+let VCM=0, numberOfSectors=1
+let outOfGrade = {}, positionsObject = {position1: ""};
 let hasBreaks = false;
 
 function generate () { //main function
@@ -25,602 +23,504 @@ function generate () { //main function
     createOutput();
 }
 
+function loadCrew (){
+    //Parse text data
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(data, 'text/html');
+    crewList = [];//Clear crew list
+    let crew= [];//To temporarly hold HTML collection
+    crew = doc.getElementsByClassName('crew-card')
+    let counter=1; //counld not get id of items in HTMLcollection properly, so added this counter for simple sorting later
 
-
-
-function selectIR (){
-  crewList.sort((a, b) => a.ratingIR - b.ratingIR);
-  let x = aircraftType.includes('A380') ? 2 : 1;
-  for (let i=0; i<x; i++){
-    crewList[i].inflightRetail = true;
-  }
+    //Iterate through HTML collection to generate array of objects with crew details
+    for (let n of crew){
+        const nickname = n.getElementsByClassName('nickname')[0].innerHTML
+        const staffNumber = n.getElementsByClassName('id')[0].innerHTML.slice(1)
+        const fullname = n.getElementsByClassName('fullname')[0].innerHTML
+        const grade = n.getElementsByClassName('grade')[0].innerHTML
+        const content = n.getElementsByClassName('crew-content')[0].innerHTML
+        const badges = n.getElementsByClassName('badges')[0].innerHTML
+        const flag = content.substring(
+            content.indexOf(`<img src="https://emiratesgroup.sharepoint.com/sites/ccp/Shared Documents/ACI/country/`) +10,
+            content.indexOf(`.png" alt="" data-themekey="#">  </p>      <p class="break"><b>Languages:</b>`)+4
+        ) 
+        const nationality =content.substring(
+            content.indexOf("ality:</b>")+10,
+            content.indexOf(`&nbsp;`)
+            )
+            .replace("Korea, Republic Of", "Korea")//Replace few oficial countries names for easy reading
+            .replace("Czech Republic", "Czech")
+            .replace("Taiwan, Province Of China", "Taiwan")
+            .replace("United Arab Emirates", "UAE")
+            .replace("Russian Federation", "Russia")
+            .trim();
+        const languages = content.substring(
+            content.indexOf("Languages:</b> ") + 15,
+            content.indexOf(`</p>      <p><b>CCM:`)
+            )
+            .replace("Ukranian", "Ukrainian");//Grammar correction
+        let timeInGrade;
+        if (content.includes("Years") === -1) {//Case when crew worked 2 years or more in current grade
+            timeInGrade = content.substring(
+                content.indexOf("<b>Grade Exp: </b>") + 18,
+                content.indexOf("Year")-1
+                ) + "y " + content.substring(
+                content.indexOf("Year") + 6,
+                content.indexOf("Month")-1
+                ) + "m";
+        } else { // Case when crew worked 1 year in current grade
+            timeInGrade = content.substring(
+                content.indexOf("<b>Grade Exp: </b>") + 18,
+                content.indexOf("Year")-1
+                ) + "y " + content.substring(
+                content.indexOf("Year") + 5,
+                content.indexOf("Month")-1 
+                ) + "m";
+        }//end else
+        let y = parseInt(timeInGrade.substring(0, timeInGrade.indexOf("y")));
+        let m = parseInt(timeInGrade.substring(timeInGrade.indexOf("y")+1, timeInGrade.indexOf("m")));
+        let timeInGradeNumber = m+y*12;//This required for sorting later to avoid conversion of grade experience
+        let ratingIR = 21; //Since maximum rating is 20, this set to 21 so crew can be sorted by inflight retail rating
+        if (badges.includes("EMIRATESRED TOP SELLER")) {
+            ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
+        }
+        let comment = "";
+        if (n.getElementsByClassName("comment").length >= 1) {
+            comment = n.getElementsByClassName("comment")[0].innerHTML;
+        }
+        let count = counter;
+        let lastPosition;
+        if (grade === "PUR" || grade === "CSA" ){//previous position length=0 so any position can be repeated
+            lastPosition = []}
+        else if (grade === "GR1" || grade === "FG1" || grade === "CSV"){//one previous position shoul not be repeated
+            lastPosition = [""]}
+        else { //for Gr2 two previous positions should not be repeated
+            lastPosition = ["", ""]
+        }
+        crewList.push({
+            count,
+            grade,
+            nickname,
+            fullname,
+            nationality,
+            flag,
+            ratingIR,
+            comment,
+            staffNumber,
+            languages,
+            timeInGrade,
+            timeInGradeNumber,
+            lastPosition,
+            inflightRetail: false,
+            ... positionsObject
+            }) 
+        counter++;
+    }//end (for n of crew)
 }
 
+const loadPositions = (aType) => {
+    positions = { ...eval(aType) };//positions cloned from constants
+    //VCM check
+    let positionsList = [];
+    Object.keys(positions).forEach((grade)=>{//Iterate through each grade and group and push positions to an array 
+        Object.keys(positions[grade]).forEach((group)=>{
+            positions[grade][group].forEach((item)=>{positionsList.push(item)})
+        });//end forEach(group)
+    })//end forEach(grade)
+    if (crewList.length !== positionsList.length) {
+        VCM = positionsList.length-crewList.length;
+        console.log(`VCM ${VCM} operation`)
+        if (VCM >0){ VCMrules()}
+        if (VCM <0){ extraRules()}
+    }//end if
+}
 
+function checkOutOfGrade (){
+    Object.keys(positions).forEach((grade)=>{
+        let positionsList = [];
+        Object.keys(positions[grade]).forEach((group)=>{
+            positions[grade][group].forEach((item)=>{positionsList.push(item)})
+        });//End forEach(group)
+        const filterCrew = crewList.filter( x => x.grade === grade);
+        let u = filterCrew.length - positionsList.length;
+        if (u !== 0){outOfGrade[grade] = u}
+    })//End forEach(grade)
+    if (Object.keys(outOfGrade).length > 0){outOfGradeRules()}
+}
+
+function selectIR (){//Sets value true for key inflightRetail
+    crewList.sort((a, b) => a.ratingIR - b.ratingIR);
+    let x = aircraftType.includes('A380') ? 2 : 1;
+    for (let i=0; i<x; i++){
+        crewList[i].inflightRetail = true;
+    }
+}
 
 function selectPositions (s){
-  let positionsActive = {...positions}
+    let positionsActive = {...positions}
 
-
-//Pre-allocated positions check
-  const filterCrew = crewList.filter( x => x[`position${s}`] !== "");
-  if (filterCrew.length >0){
+    //Pre-allocated positions check
+    //Removes positions that wre manualy pre-allocated by CPM. This functionality for future extension
+    const filterCrew = crewList.filter( x => x[`position${s}`] !== "");
+    if (filterCrew.length >0){
         for (const r of filterCrew){
-          positionsActive[r.grade].forEach((type)=>{
-                  if (positionsActive[grade][type].includes(r[`position${s}`])){
-                    positionsActive[grade][type].splice(positionsActive[grade][type].indexOf(r[`position${s}`]),1);
-                  }
-          })}
-  }
-//End of pre-allocated positions check
+            positionsActive[r.grade].forEach((type)=>{
+                if (positionsActive[grade][type].includes(r[`position${s}`])){
+                      positionsActive[grade][type].splice(positionsActive[grade][type].indexOf(r[`position${s}`]),1);
+                }//end if
+            })//end forEach(type)
+        }//enf for (const r of filterCrew)
+    }//enf if
+    //End of pre-allocated positions check
 
-
-  Object.keys(positionsActive).forEach((grade)=>{
-    
-    Object.keys(positionsActive[grade]).forEach((type)=>{
-      if (positionsActive[grade][type].length!==0){
-              if (type === "galley"){
-                          positionsActive[grade][type].forEach((position)=>{
-                            const filteredCrew = crewList.filter( x => 
-                            x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true);
+    Object.keys(positionsActive).forEach((grade)=>{
+        Object.keys(positionsActive[grade]).forEach((type)=>{
+            if (positionsActive[grade][type].length!==0){
+                if (type === "galley"){
+                    positionsActive[grade][type].forEach((position)=>{
+                        const filteredCrew = crewList.filter( x => 
+                            x.grade === grade && 
+                            x.timeInGradeNumber > 6 && 
+                            x[`position${s}`]==="" && 
+                            x.lastPosition.includes(position) !==true);
                             // x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true && x.inflightRetail !== true);
-                            if (filteredCrew.length > 1 && grade === "GR2"){filteredCrew.pop()}//Removes most junior crew - to ensure CSA position given to most junior crew if available
+                        if (filteredCrew.length > 1 && grade === "GR2"){filteredCrew.pop()}//Removes most junior crew - to ensure CSA position given to most junior crew if available
+                        let w = filteredCrew.length;
+                        let q = getRandomNumber(0, w-1);
+                        filteredCrew[q][`position${s}`] = position; 
+                        filteredCrew[q].lastPosition.push(position); 
+                        filteredCrew[q].lastPosition.shift(); 
+                        })//end forEach(position)
+                }
+                else {//non-galley positions ("main")
+                    positionsActive[grade][type].forEach((position)=>{
+                        if (position === "CSA" || position === "R3 (CSA)" || position === "MR3 (CSA)"){
+                            const filteredCrew = crewList.filter( x => 
+                                x.grade === grade && 
+                                x[`position${s}`]==="");
+                            filteredCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
+                            filteredCrew[0][`position${s}`] = position;
+                            filteredCrew[0].lastPosition.push(position); 
+                            filteredCrew[0].lastPosition.shift(); 
+                        }//end if
+                        else{//non-CSA positions
+                            let filteredCrew = crewList.filter( x => 
+                                x.grade === grade && 
+                                x[`position${s}`]==="" && 
+                                x.lastPosition.includes(position) !==true);
                             let w = filteredCrew.length;
+                            if (w===0){ //No solution. Ignore last position
+                                filteredCrew = crewList.filter( x => 
+                                    x.grade === grade && 
+                                    x[`position${s}`]==="" );
+                                w = filteredCrew.length;
+                                      }//end if (w===0)
                             let q = getRandomNumber(0, w-1);
                             filteredCrew[q][`position${s}`] = position; 
                             filteredCrew[q].lastPosition.push(position); 
                             filteredCrew[q].lastPosition.shift(); 
-                        })//position
-              }
-              else {
-                          positionsActive[grade][type].forEach((position)=>{
-                              if (position === "CSA" || position === "R3 (CSA)" || position === "MR3 (CSA)"){
-                                const filteredCrew = crewList.filter( x => 
-                                  x.grade === grade && x[`position${s}`]==="");
-                                  filteredCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
-                                  filteredCrew[0][`position${s}`] = position;
-                                  filteredCrew[0].lastPosition.push(position); 
-                                  filteredCrew[0].lastPosition.shift(); 
-                              }
-                              else{
-                                let filteredCrew = crewList.filter( x => 
-                                  x.grade === grade && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true);
-                                  let w = filteredCrew.length;
-                                  if (w===0){ //No solution. Ignore last position
-                                    filteredCrew = crewList.filter( x => 
-                                    x.grade === grade && x[`position${s}`]==="" );
-                                  w = filteredCrew.length;
-                                  }
-                                  let q = getRandomNumber(0, w-1);
-                                  filteredCrew[q][`position${s}`] = position; 
-                                  filteredCrew[q].lastPosition.push(position); 
-                                  filteredCrew[q].lastPosition.shift(); 
-                              }
-                        })//position 
-              }
-
-  
-  }//if type
-
-})//type
-
-  }  )//positionActive
-  // console.log(crewList)
+                        }//end else non-CSA
+                    })//end forEach(position) 
+                }//end else non-galley
+            }//end if position type empty
+        })//end forEach(type)
+    })//end forEach((grade)
 }
 
-
-
-
-
-
-
-const loadPositions = (aType) => {
-  positions = { ...eval(aType) };
-
-  // let field = document.getElementById('positions');
-  // field.innerHTML = JSON.stringify(positions);
-
-  //VCM check
-  let positionsList = [];
-  Object.keys(positions).forEach((grade)=>{
-      Object.keys(positions[grade]).forEach((group)=>{
-        positions[grade][group].forEach((item)=>{
-                  positionsList.push(item)}
-          )
-    });
-    
-})
-// console.log(positionsList)
-if (crewList.length !== positionsList.length) {
-  VCM = positionsList.length-crewList.length;
-  console.log(`VCM ${VCM} operation`)
-  if (VCM >0){ VCMrules()}
-  if (VCM <0){ extraRules()}
- 
-}
-
-}
-
+//Next few functions handle non-standard operation rules
 function extraRules(){
-  //For rare case, when operating with additional crew. This happens when for example 3 class crew set on return sector operates 2 class aircraft 
-for (let f=0; f>VCM; f--){
-positions.GR2.main.push(EXTRA[aircraftType].shift())
+    //For rare case, when operating with additional crew. This happens when for example 3 class crew set on return sector operates 2 class aircraft
+    for (let f=0; f>VCM; f--){
+        positions.GR2.main.push(EXTRA[aircraftType].shift())
+    }
 }
-}
-
 function VCMrules (){
-//CSA check
-const filteredCrew = crewList.filter( x => 
-  x.grade === "CSA");
-  if (filteredCrew.length === 0){
-    positions.CSA.main.pop();
-    positions.GR2.main.unshift("CSA")
-  }
-//Crew positions adjustment
-  switch(aircraftType) {
-    case "A380_3class_ULR":
-    case "A380_3class_nonULR":
-      //=======================
-        if (VCM >= 1){ //Because CSA conted towards total crew compliment. If no CSA (VCM 1) it will be adjusted in previous lines of code
-          positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
-          positions.GR2.main.splice(positions.GR2.main.indexOf("MR3"),1);
-          positions.GR2.main.unshift("MR3 (CSA)");
-        }
-        if (VCM >= 2){ 
-          positions.GR2.main.splice(positions.GR2.main.indexOf("ML4"),1)
-          positions.GR1.main.splice(positions.GR1.main.indexOf("ML4A"),1)
-          positions.GR1.main.push("ML4 (ML4A)")
-        }
-        if (VCM >= 3){ 
-          positions.GR2.main.splice(positions.GR2.main.indexOf("MR5"),1)
-          positions.GR1.main.splice(positions.GR1.main.indexOf("MR4A"),1)
-          positions.GR1.main.push("MR5 (MR4A)")
-        }
-        if (VCM >= 4){ 
-          positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
-          positions.GR1.main.splice(positions.GR1.main.indexOf("ML3A"),1)
-          positions.GR1.main.push("ML3 (ML3A)")
-        }
-        if (VCM >= 5 && aircraftType === "A380_3class_ULR"){ 
-          positions.CSV.main.splice(positions.CSV.main.indexOf("ML1"),1)
-          positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
-          positions.GR2.main.splice(positions.GR2.main.indexOf("MR1"),1)
-          positions.PUR.main.push("ML1 (PUR)")
-          positions.CSV.main.push("MR1 (ML1)")
-        }
-        if (VCM >= 5 && aircraftType === "A380_3class_nonULR"){ 
-          positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
-          positions.GR2.main.splice(positions.GR2.main.indexOf("ML1"),1)
-          positions.PUR.main.push("ML1 (PUR)")
-        }
-        if (VCM >= 6){
-          console.error("Less than minimum crew requirement to operate")
-        }
-      //===========================
-      break;
-    case "A380_2class_ULR":
-    case "A380_2class_nonULR":
-      //=======================
-      if (VCM >= 1){ 
-        positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("MR3"),1);
-        positions.GR2.main.unshift("MR3 (CSA)");
-      }
-      if (VCM >= 2){ 
-        positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
-        positions.GR1.main.splice(positions.GR1.main.indexOf("ML3A"),1)
-        positions.GR1.main.push("ML3 (ML3A)")
-      }
-      if (VCM >= 3 && aircraftType === "A380_3class_ULR"){ 
-        positions.CSV.main.splice(positions.CSV.main.indexOf("ML1"),1)
-        positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
-        positions.GR2.main.splice(positions.GR2.main.indexOf("MR1"),1)
-        positions.PUR.main.push("ML1 (PUR)")
-        positions.CSV.main.push("MR1 (ML1)")
-      }
-      if (VCM >= 3 && aircraftType === "A380_3class_nonULR"){ 
-        positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
-        positions.GR2.main.splice(positions.GR2.main.indexOf("ML1"),1)
-        positions.PUR.main.push("ML1 (PUR)")
-      }
-      if (VCM >= 4){
-        console.error("Less than minimum crew requirement to operate")
-      }
-    //===========================
-    break;
-    case "B773_2class":
-      //=======================
-      if (VCM >= 1){ 
-        positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
-        positions.GR2.main.unshift("R3 (CSA)");
-      }
-      if (VCM >= 2){ 
-        positions.GR2.main.splice(positions.GR2.main.indexOf("L5A"),1);
-      }
-      if (VCM >= 3){ 
-        positions.GR1.main.splice(positions.GR1.main.indexOf("L1A"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("R2"),1);
-        positions.GR1.main.push("R2 (L1A)");
-      }
-      if (VCM >= 4){ 
-        positions.GR1.main.splice(positions.GR1.main.indexOf("L1"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("L2"),1);
-        positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1);
-        positions.GR1.main.push("L2 (L1)");
-        positions.PUR.main.push("L1 (PUR)");
-      }
-      if (VCM >= 5){
-        console.error("Less than minimum crew requirement to operate")
-      }
-      //========================
-      break;
-    case "B773_3class":
-      //=======================
-      if (VCM >= 1){ 
-        positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
-        positions.GR2.main.unshift("R3 (CSA)");
-      }
-      if (VCM >= 2){ 
-        positions.GR2.main.splice(positions.GR2.main.indexOf("L5A"),1);
-      }
-      if (VCM >= 3){ 
-        positions.GR1.main.splice(positions.GR1.main.indexOf("L2A"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("L4"),1);
-        positions.GR1.main.push("L4 (L2A)");
-      }
-      if (VCM >= 4){ 
-        positions.CSV.main.splice(positions.CSV.main.indexOf("R2A"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("R4"),1);
-        positions.CSV.main.push("R4 (R2A)");
-      }
-      if (VCM >= 5){ 
-        positions.FG1.main.splice(positions.FG1.main.indexOf("L1"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("R5"),1);
-        positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1);
-        positions.FG1.main.push("R5 (L1)");
-        positions.PUR.main.push("L1 (PUR)");
-      }
-      if (VCM >= 6){
-        console.error("Less than minimum crew requirement to operate")
-      }
-      break;
-      case "B772":
-      //=======================
-      if (VCM >= 1){ 
-        positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
-        positions.GR2.main.unshift("R3 (CSA)");
-      }
-      if (VCM >= 2){ 
-        positions.GR2.main.splice(positions.GR2.main.sindexOf("L4A"),1);
-      }
-      if (VCM >= 3){ 
-        positions.GR1.main.splice(positions.GR1.main.indexOf("R1A"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("R2"),1);
-        positions.GR1.main.push("R2 (R1A)");
-      }
-      if (VCM >= 4){ 
-        positions.GR1.main.splice(positions.GR1.main.indexOf("L1A"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("L2"),1);
-        positions.GR1.main.push("L2 (L1A)");
-      }
-      if (VCM >= 5){ 
-        positions.GR1.main.splice(positions.GR1.main.indexOf("L1"),1);
-        positions.GR2.main.splice(positions.GR2.main.indexOf("R4"),1);
-        positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1);
-        positions.GR1.main.push("R4 (L1)");
-        positions.PUR.main.push("L1 (PUR)");
-      }
-      if (VCM >= 6){
-        console.error("Less than minimum crew requirement to operate")
-      }
-      //========================
-      break;
-    default:
-      console.error("Aircraft type not found!")
-  }
-  // console.log(positions)
+    //CSA check
+    const filteredCrew = crewList.filter( x => x.grade === "CSA");
+    if (filteredCrew.length === 0){
+        positions.CSA.main.pop();
+        positions.GR2.main.unshift("CSA")
+    }
+    //Crew positions adjustment
+    switch(aircraftType) {
+        //===========================================================================
+        case "A380_3class_ULR":
+        case "A380_3class_nonULR":
+            if (VCM >= 1){ //CSA conted towards total crew compliment
+                positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("MR3"),1);
+                positions.GR2.main.unshift("MR3 (CSA)");
+            }
+            if (VCM >= 2){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("ML4"),1)
+                positions.GR1.main.splice(positions.GR1.main.indexOf("ML4A"),1)
+                positions.GR1.main.push("ML4 (ML4A)")
+            }
+            if (VCM >= 3){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("MR5"),1)
+                positions.GR1.main.splice(positions.GR1.main.indexOf("MR4A"),1)
+                positions.GR1.main.push("MR5 (MR4A)")
+            }
+            if (VCM >= 4){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
+                positions.GR1.main.splice(positions.GR1.main.indexOf("ML3A"),1)
+                positions.GR1.main.push("ML3 (ML3A)")
+            }
+            if (VCM >= 5 && aircraftType === "A380_3class_ULR"){ 
+                positions.CSV.main.splice(positions.CSV.main.indexOf("ML1"),1)
+                positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
+                positions.GR2.main.splice(positions.GR2.main.indexOf("MR1"),1)
+                positions.PUR.main.push("ML1 (PUR)")
+                positions.CSV.main.push("MR1 (ML1)")
+            }
+            if (VCM >= 5 && aircraftType === "A380_3class_nonULR"){ 
+                positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
+                positions.GR2.main.splice(positions.GR2.main.indexOf("ML1"),1)
+                positions.PUR.main.push("ML1 (PUR)")
+            }
+            if (VCM >= 6){
+                console.error("Less than minimum crew requirement to operate")
+            }
+        break;
+        //===========================================================================
+        case "A380_2class_ULR":
+        case "A380_2class_nonULR":
+            if (VCM >= 1){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("MR3"),1);
+                positions.GR2.main.unshift("MR3 (CSA)");
+            }
+            if (VCM >= 2){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
+                positions.GR1.main.splice(positions.GR1.main.indexOf("ML3A"),1)
+                positions.GR1.main.push("ML3 (ML3A)")
+            }
+            if (VCM >= 3 && aircraftType === "A380_3class_ULR"){ 
+                positions.CSV.main.splice(positions.CSV.main.indexOf("ML1"),1)
+                positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
+                positions.GR2.main.splice(positions.GR2.main.indexOf("MR1"),1)
+                positions.PUR.main.push("ML1 (PUR)")
+                positions.CSV.main.push("MR1 (ML1)")
+            }
+            if (VCM >= 3 && aircraftType === "A380_3class_nonULR"){ 
+                positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
+                positions.GR2.main.splice(positions.GR2.main.indexOf("ML1"),1)
+                positions.PUR.main.push("ML1 (PUR)")
+            }
+            if (VCM >= 4){
+                console.error("Less than minimum crew requirement to operate")
+            }
+        break;
+        //===========================================================================
+        case "B773_2class":
+            if (VCM >= 1){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
+                positions.GR2.main.unshift("R3 (CSA)");
+            }
+            if (VCM >= 2){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("L5A"),1);
+            }
+            if (VCM >= 3){ 
+                positions.GR1.main.splice(positions.GR1.main.indexOf("L1A"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("R2"),1);
+                positions.GR1.main.push("R2 (L1A)");
+            }
+            if (VCM >= 4){ 
+                positions.GR1.main.splice(positions.GR1.main.indexOf("L1"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("L2"),1);
+                positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1);
+                positions.GR1.main.push("L2 (L1)");
+                positions.PUR.main.push("L1 (PUR)");
+            }
+            if (VCM >= 5){
+                console.error("Less than minimum crew requirement to operate")
+            }
+        break;
+        //===========================================================================
+        case "B773_3class":
+            if (VCM >= 1){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
+                positions.GR2.main.unshift("R3 (CSA)");
+            }
+            if (VCM >= 2){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("L5A"),1);
+            }
+            if (VCM >= 3){ 
+                positions.GR1.main.splice(positions.GR1.main.indexOf("L2A"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("L4"),1);
+                positions.GR1.main.push("L4 (L2A)");
+            }
+            if (VCM >= 4){ 
+                positions.CSV.main.splice(positions.CSV.main.indexOf("R2A"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("R4"),1);
+                positions.CSV.main.push("R4 (R2A)");
+            }
+            if (VCM >= 5){ 
+                positions.FG1.main.splice(positions.FG1.main.indexOf("L1"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("R5"),1);
+                positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1);
+                positions.FG1.main.push("R5 (L1)");
+                positions.PUR.main.push("L1 (PUR)");
+            }
+            if (VCM >= 6){
+                console.error("Less than minimum crew requirement to operate")
+            }
+        break;
+        //===========================================================================
+        case "B772":
+            if (VCM >= 1){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
+                positions.GR2.main.unshift("R3 (CSA)");
+            }
+            if (VCM >= 2){ 
+                positions.GR2.main.splice(positions.GR2.main.sindexOf("L4A"),1);
+            }
+            if (VCM >= 3){ 
+                positions.GR1.main.splice(positions.GR1.main.indexOf("R1A"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("R2"),1);
+                positions.GR1.main.push("R2 (R1A)");
+            }
+            if (VCM >= 4){ 
+                positions.GR1.main.splice(positions.GR1.main.indexOf("L1A"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("L2"),1);
+                positions.GR1.main.push("L2 (L1A)");
+            }
+            if (VCM >= 5){ 
+                positions.GR1.main.splice(positions.GR1.main.indexOf("L1"),1);
+                positions.GR2.main.splice(positions.GR2.main.indexOf("R4"),1);
+                positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1);
+                positions.GR1.main.push("R4 (L1)");
+                positions.PUR.main.push("L1 (PUR)");
+            }
+            if (VCM >= 6){
+              console.error("Less than minimum crew requirement to operate")
+            }
+        break;
+        default:
+            console.error("Aircraft type not found!")
+    }//end switch
 }
-
-
-
 
 const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-function loadCrew (){
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(data, 'text/html');
-  crewList = [];
-let crew= [];
-crew = doc.getElementsByClassName('crew-card')
-let counter=1;//counld not get id of items in HTMLcollection properly, so added thsi ocunter for simple sorting later
-for (let n of crew){
-const nickname = n.getElementsByClassName('nickname')[0].innerHTML
-const staffNumber = n.getElementsByClassName('id')[0].innerHTML.slice(1)
-const fullname = n.getElementsByClassName('fullname')[0].innerHTML
-const grade = n.getElementsByClassName('grade')[0].innerHTML
-const content = n.getElementsByClassName('crew-content')[0].innerHTML
-const badges = n.getElementsByClassName('badges')[0].innerHTML
-
-const flag = content.substring(
-  content.indexOf(`<img src="https://emiratesgroup.sharepoint.com/sites/ccp/Shared Documents/ACI/country/`) +10,
-  content.indexOf(`.png" alt="" data-themekey="#">  </p>      <p class="break"><b>Languages:</b>`)+4
-) 
-const nationality =content.substring(
-  content.indexOf("ality:</b>")+10,
-  content.indexOf(`&nbsp;`)
-)
-  .replace("Korea, Republic Of", "Korea")
-  .replace("Czech Republic", "Czech")
-  .replace("Taiwan, Province Of China", "Taiwan")
-  .replace("United Arab Emirates", "UAE")
-  .replace("Russian Federation", "Russia")
-  .trim();
-
-const languages = content.substring(
-content.indexOf("Languages:</b> ") + 15,
-content.indexOf(`</p>      <p><b>CCM:`)
-).replace("Ukranian", "Ukrainian");
-
-
-let timeInGrade;
-if (content.includes("Years") === -1) {
-timeInGrade =
-  content.substring(
-    content.indexOf("<b>Grade Exp: </b>") + 18,
-    content.indexOf("Year")-1
-  ) +
-  "y " +
-  content.substring(
-    content.indexOf("Year") + 6,
-    content.indexOf("Month")-1
-  ) +
-  "m";
-} else {
-timeInGrade =
-  content.substring(
-    content.indexOf("<b>Grade Exp: </b>") + 18,
-    content.indexOf("Year")-1
-  ) +
-  "y " +
-  content.substring(
-    content.indexOf("Year") + 5,
-    content.indexOf("Month")-1
-  ) +
-  "m";
-}
-let y = parseInt(timeInGrade.substring(0, timeInGrade.indexOf("y")));
-let m = parseInt(timeInGrade.substring(timeInGrade.indexOf("y")+1, timeInGrade.indexOf("m")));
-let timeInGradeNumber = m+y*12;
-
-
-let ratingIR = 21; 
-if (badges.includes("EMIRATESRED TOP SELLER")) {
-ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
-}
-
-let comment = "";
-if (n.getElementsByClassName("comment").length >= 1) {
-comment = n.getElementsByClassName("comment")[0].innerHTML;
-}
-
-let count = counter;
-
-let lastPosition;
-if (grade === "PUR" || grade === "CSA" ){//previous position length=0 so any position can be repeated
-lastPosition = []}
-else if (grade === "GR1" || grade === "FG1" || grade === "CSV"){//one previous position shoul not be repeated
-lastPosition = [""]}
-else { //for Gr2 two previous positions should not be repeated
-lastPosition = ["", ""]
-}
-crewList.push({
-  count,
-  grade,
-  nickname,
-  fullname,
-  nationality,
-  flag,
-  ratingIR,
-  comment,
-  staffNumber,
-  languages,
-  timeInGrade,
-  timeInGradeNumber,
-  lastPosition,
-  inflightRetail: false,
-  ... positionsObject
-  }) 
-counter++;
-}//for n of crew
-}
-
-
-
-
-
-
-
-
-
-
-
-function checkOutOfGrade (){
-    Object.keys(positions).forEach((grade)=>{
-    let positionsList = [];
-      Object.keys(positions[grade]).forEach((group)=>{
-        positions[grade][group].forEach((item)=>{
-                  positionsList.push(item)}
-          )
-    });
-    
-    const filterCrew = crewList.filter( x => x.grade === grade);
-    let u = filterCrew.length - positionsList.length;
-    if (u !== 0){outOfGrade[grade] = u}
-})
-if (Object.keys(outOfGrade).length > 0){outOfGradeRules()}
-}
-
 function outOfGradeRules (){
-  const grades = {"PUR": 5, "CSV":4, "FG1": 3, "GR1":2,"GR2": 1, "CSA":0}
-  do{
-    let oldGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] > 0);
-    let newGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] < 0);
-    if (grades[oldGrade] - grades[newGrade] <= 2 && grades[oldGrade] - grades[newGrade] > 0){ // Crew pulled as lower grade
-      const filterCrew = crewList.filter( x => x.grade === oldGrade);
-      filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
-      filterCrew[0].grade= newGrade; //moves crew to a new grade
-      filterCrew[0].originalGrade= oldGrade; 
-      
-    }
-    else if (grades[oldGrade] - grades[newGrade] >= -1 && grades[oldGrade] - grades[newGrade] < 0){ // Crew pulled as higher grade
-      const filterCrew = crewList.filter( x => x.grade === oldGrade);
-      filterCrew.sort((a, b) => b.timeInGradeNumber - a.timeInGradeNumber); //most senior crew
-      filterCrew[0].grade= newGrade; //moves crew to a new grade
-      filterCrew[0].originalGrade= oldGrade; 
-      filterCrew[0].timeInGradeNumber = 0; 
-    }
-    else {//crew pulled out with big grade gap. Only happens to pull as much lower grade
-      let middleGrade = Object.keys(grades).find(key => grades[key] === grades[oldGrade] - 2);
-      const filterCrew = crewList.filter( x => x.grade === oldGrade);
-      filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
-      filterCrew[0].grade= middleGrade; 
-      filterCrew[0].originalGrade= oldGrade; 
-      const filterMiddleCrew = crewList.filter( x => x.grade === middleGrade);
-      filterMiddleCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
-      filterMiddleCrew[0].grade= newGrade; 
-      filterMiddleCrew[0].originalGrade= middleGrade; 
-    }
-    outOfGrade[oldGrade] --;
-    outOfGrade[newGrade] ++;
-  } while (Object.values(outOfGrade).reduce((a, b) => a + Math.abs(b)) !== 0)
-
-
-  
+    const grades = {"PUR": 5, "CSV":4, "FG1": 3, "GR1":2,"GR2": 1, "CSA":0}; //Used to manipulate grades as numbers/ Since crew can operate only 1 grade higher or 2 grades lower
+    do{
+        let oldGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] > 0);
+        let newGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] < 0);
+        if (grades[oldGrade] - grades[newGrade] <= 2 && grades[oldGrade] - grades[newGrade] > 0){ // Crew pulled as lower grade
+            const filterCrew = crewList.filter( x => x.grade === oldGrade);
+            filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber); //most junior crew
+            filterCrew[0].grade= newGrade; //moves crew to a new grade
+            filterCrew[0].originalGrade= oldGrade; 
+        }
+        else if (grades[oldGrade] - grades[newGrade] >= -1 && grades[oldGrade] - grades[newGrade] < 0){ // Crew pulled as higher grade
+            const filterCrew = crewList.filter( x => x.grade === oldGrade);
+            filterCrew.sort((a, b) => b.timeInGradeNumber - a.timeInGradeNumber); //most senior crew
+            filterCrew[0].grade= newGrade; 
+            filterCrew[0].originalGrade= oldGrade; 
+            filterCrew[0].timeInGradeNumber = 0; 
+        }
+        else {//crew pulled out with big grade gap. Only happens to pull as much lower grade
+            let middleGrade = Object.keys(grades).find(key => grades[key] === grades[oldGrade] - 2);
+            //first crew
+            const filterCrew = crewList.filter( x => x.grade === oldGrade);
+            filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
+            filterCrew[0].grade= middleGrade; 
+            filterCrew[0].originalGrade= oldGrade; 
+            //second crew
+            const filterMiddleCrew = crewList.filter( x => x.grade === middleGrade);
+            filterMiddleCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
+            filterMiddleCrew[0].grade= newGrade; 
+            filterMiddleCrew[0].originalGrade= middleGrade; 
+        }
+        outOfGrade[oldGrade] --;
+        outOfGrade[newGrade] ++;
+    } while (Object.values(outOfGrade).reduce((a, b) => a + Math.abs(b)) !== 0)
 }
 
-
-
-
-
-
-
-
+//Position handlers for cargo flights simplified since crew work out of grades, no galleys and inflight retail
 function selectPositionsCargo () {
-positions.forEach((h, index) => crewList[index].position=h)
+    positions.forEach((h, index) => crewList[index].position=h)
 }
-
 function loadPositionsCargo (){
-  positions = [...aircraftType]
+    positions = [...aircraftType]
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//Renderer draws tablet with crew details and allocated positions
 function createOutput () {
-  crewList.sort((a, b) => a.count - b.count);
-  let headerInsert = "";
-
-for (const s of Object.keys(positionsObject)){
-headerInsert+=`<th>${s}</th>`
-}
-  const header = `
-  <table border="1">  
-    <tr>
-      <th>Grade</th>
-      <th>Nickname</th>
-${headerInsert}
-      <th>Full name</th>
-      <th>Staff number</th>
-      <th>Nationality</th>
-      <th>Languages</th>
-      <th>Time in grade</th>
-      <th>Rating DF</th>
-      <th>Comment</th>
-    </tr>`;
-const footer = `</table>`;
-let fileContent = "";
-let lastGrade = ""; 
-crewList.forEach(createTable); 
-function createTable(item, index) {
-  if (lastGrade == "") {
-    // item.grade = "PUR"; // добавляет мне праивльный грейд
-    // далее код добавляет рядки-разделители разных кабин
-    fileContent += `<tr><td class="centerCell"colspan="30" style="background-color:#F7DC6F"><b>Seniors</b></td></tr>`;
-  }
-  if (lastGrade !== item.grade && item.grade == "GR1") {
-    fileContent += `<tr class="CSA"><td class="centerCell" colspan="30" style="background-color:#5DADE2"><b>Business class</b></td></tr>`;
-  }
-  if (lastGrade !== item.grade && item.grade == "FG1") {
-    fileContent += `<tr><td class="centerCell" colspan="30" style="background-color:#EC7063"><b>First class</b></td></tr>`;
-  }
-  if (lastGrade !== item.grade && item.grade == "GR2") {
-    fileContent += `<tr><td class="centerCell" colspan="30" style="background-color:#52BE80"><b>Economy class class</b></td></tr>`;
-  }
-let fileContentInsert = "";
-for (let s=1; s<=numberOfSectors; s++){
-fileContentInsert+=`<td><div contenteditable>${item["position"+s]}</div></td>`;
-    if (hasBreaks){
-      fileContentInsert+=`<td><div contenteditable>${item["break"+s]}</div></td>`;
+    crewList.sort((a, b) => a.count - b.count);
+    let headerInsert = ""; //Variable number of sectors and breaks
+    for (const s of Object.keys(positionsObject)){
+        headerInsert+=`<th>${s}</th>`
     }
-
+    const header = `
+        <table border="1">  
+            <tr>
+                <th>Grade</th>
+                <th>Nickname</th>
+                ${headerInsert}
+                <th>Full name</th>
+                <th>Staff number</th>
+                <th>Nationality</th>
+                <th>Languages</th>
+                <th>Time in grade</th>
+                <th>Rating DF</th>
+                <th>Comment</th>
+            </tr>`;
+    const footer = `</table>`;
+    let fileContent = "";
+    let lastGrade = ""; 
+    crewList.forEach(createTable); 
+        function createTable(item, index) {
+            if (lastGrade == "") {
+                // item.grade = "PUR"; // добавляет мне праивльный грейд
+                // Create separation lines in tablet between cabins. Decoration for better visuals
+                fileContent += `
+                    <tr><td class="centerCell"colspan="30" style="background-color:#F7DC6F">
+                        <b>Seniors</b>
+                    </td></tr>`;
+            }
+            if (lastGrade !== item.grade && item.grade == "GR1") {
+                fileContent += `
+                    <tr class="CSA"><td class="centerCell" colspan="30" style="background-color:#5DADE2">
+                        <b>Business class</b>
+                    </td></tr>`;
+            }
+            if (lastGrade !== item.grade && item.grade == "FG1") {
+                fileContent += `
+                    <tr><td class="centerCell" colspan="30" style="background-color:#EC7063">
+                        <b>First class</b>
+                    </td></tr>`;
+            }
+            if (lastGrade !== item.grade && item.grade == "GR2") {
+                fileContent += `
+                    <tr><td class="centerCell" colspan="30" style="background-color:#52BE80">
+                        <b>Economy class class</b>
+                    </td></tr>`;
+            }
+            let fileContentInsert = "";
+            for (let s=1; s<=numberOfSectors; s++){
+                fileContentInsert+=`<td><div contenteditable>${item["position"+s]}</div></td>`;
+                    if (hasBreaks){
+                        fileContentInsert+=`<td><div contenteditable>${item["break"+s]}</div></td>`;
+                    }//end if
+            }//end for
+            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
+            //With flags
+            // fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+            lastGrade = item.grade;
+        }//end createTable()
+    let g = header + fileContent + footer;
+    document.querySelector("#output").innerHTML = g;
 }
-  fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
-  // fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
-  lastGrade = item.grade;
-}//createTable
-let g = header + fileContent + footer;
-document.querySelector("#output").innerHTML = g;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function hideShowSettings (){
+function hideShowSettings (){//Event handler for hide settings button
   document.getElementById("settings").classList.toggle("hidden")
 }
-
-
-
 
 //This block is just HTML generators for drop-down list to select aircraft type. 
 // It can be done easier with React, but did not want to use large library for small task
