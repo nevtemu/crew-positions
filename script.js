@@ -705,7 +705,7 @@ crewList.push({
   }) 
 counter++;
 }//for n of crew
-// console.log(crewList)
+console.log(crewList)
 }
   const loadNumberOfSectors = () => {
     const m = document.querySelector("#numberOfSectors").value;
@@ -756,22 +756,26 @@ function outOfGradeRules (){
       const filterCrew = crewList.filter( x => x.grade === oldGrade);
       filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
       filterCrew[0].grade= newGrade; //moves crew to a new grade
-      console.log(oldGrade, newGrade)
+      filterCrew[0].originalGrade= oldGrade; 
+      
     }
     else if (grades[oldGrade] - grades[newGrade] >= -1 && grades[oldGrade] - grades[newGrade] < 0){ // Crew pulled as higher grade
       const filterCrew = crewList.filter( x => x.grade === oldGrade);
       filterCrew.sort((a, b) => b.timeInGradeNumber - a.timeInGradeNumber); //most senior crew
       filterCrew[0].grade= newGrade; //moves crew to a new grade
-      console.log(oldGrade, newGrade)
+      filterCrew[0].originalGrade= oldGrade; 
+      filterCrew[0].timeInGradeNumber = 0; 
     }
     else {//crew pulled out with big grade gap. Only happens to pull as much lower grade
       let middleGrade = Object.keys(grades).find(key => grades[key] === grades[oldGrade] - 2);
       const filterCrew = crewList.filter( x => x.grade === oldGrade);
       filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
       filterCrew[0].grade= middleGrade; 
+      filterCrew[0].originalGrade= oldGrade; 
       const filterMiddleCrew = crewList.filter( x => x.grade === middleGrade);
       filterMiddleCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
       filterMiddleCrew[0].grade= newGrade; 
+      filterMiddleCrew[0].originalGrade= middleGrade; 
     }
     outOfGrade[oldGrade] --;
     outOfGrade[newGrade] ++;
@@ -887,7 +891,7 @@ fileContentInsert+=`<td><div contenteditable>${item["position"+s]}</div></td>`;
     }
 
 }
-  fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+  fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
   // fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
   lastGrade = item.grade;
 }//createTable
