@@ -546,6 +546,7 @@ const aircraftSelection1 = (type) => {
                     <option value="1" disabled="" selected="" hidden>Select type</option>
                     <option value="_3class">3 class</option>
                     <option value="_2class">2 class</option>
+                    <option value="_cargoInHold">Cargo in hold</option>
                 </select>`;
         break;
         case "B772":
@@ -569,12 +570,21 @@ const aircraftSelection1 = (type) => {
 }
 const aircraftSelectionA380 = (type) => {
     type2 = type;
-    field2.innerHTML =
-        `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
-            <option value="1" disabled="" selected="" hidden>Select type</option>
-            <option value="_ULR">ULR</option>
-            <option value="_nonULR">nonULR</option>
-        </select>`;
+    switch (type) {
+        case "_2class":
+        case "_3class":
+            field2.innerHTML =
+                `<select name="aircraftType3" id="aircraftType3" onchange="aircraftSelection3(this.value)">
+                    <option value="1" disabled="" selected="" hidden>Select type</option>
+                    <option value="_ULR">ULR</option>
+                    <option value="_nonULR">nonULR</option>
+                </select>`;
+        break;
+        case "_cargoInHold":
+                field2.innerHTML = ``;
+                aircraftType = type1+type2;
+        break;
+    }
 }
 const aircraftSelectionB773 = (type) => {
     type2 = type;
