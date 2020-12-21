@@ -59,8 +59,10 @@ GR1: {
 All current rules regarding CSA implemented. Can be allocated to CSA or most junior Gr2 member.
 #### Cargo flights
 Since different grades can be assigned cargo flights, positions represented in simple array (without link to operating grade). Also many handlers are skipped (in-flight retails, CSA etc.) as not applicable for cargo flights. So entire cargo operations algorithm bypasses passengers algorithm and goes directly to output.
-#### Note about break allocation
+#### Break allocation
 I prepared fields for break allocation and handler for number of sectors. To feature in just need to add function that will read breaks related to allocated position and pass them to crew object. This must be run after function `selectPositons()` since break times depends to working position.
+#### Crew preferences
+Currently only implemented processing for crew comments on the portal, where they often request preferred position. However, this is only for output table and not taken into account by algorithm. Idealy I want to implement another field in database, where crew can select favorite position and will be given priority over other crew, if multiple crew available after filtering crew list.
 
 ### Output
 Both input and ouput fields can be styled with side libraries (like Bootstrap), but I wrote this for functionality, not for design. Also JS code will look much nicer for input/output with React (or JS frameworks), but I did not want to include such large library, so used vanila JS.
