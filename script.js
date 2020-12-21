@@ -178,15 +178,17 @@ function selectPositions (s){
             if (positionsActive[grade][type].length!==0){
                 if (type === "galley"){
                     positionsActive[grade][type].forEach((position)=>{
-                        const filteredCrew = crewList.filter( x => 
+                        let filteredCrew = crewList.filter( x => 
                             x.grade === grade && 
                             x.timeInGradeNumber > 6 && 
                             x[`position${s}`]==="" && 
-                            x.lastPosition.includes(position) !==true);
-                            // x.grade === grade && x.timeInGradeNumber > 6 && x[`position${s}`]==="" && x.lastPosition.includes(position) !==true && x.inflightRetail !== true);
-                        if (filteredCrew.length > 1 && grade === "GR2"){filteredCrew.pop()}//Removes most junior crew - to ensure CSA position given to most junior crew if available
+                            x.inflightRetail !== true); //to not give galley position to IR operator
+                        const filteredCrewLast = filteredCrew.filter( p => 
+                            p.lastPosition.includes(position) !==true);
+                        if (filteredCrewLast.length > 0){filteredCrew = filteredCrewLast};
+                        if (filteredCrew.length > 1 && grade === "GR2"){filteredCrew.pop()};//Removes most junior crew - to ensure CSA position given to most junior crew if available
                         let w = filteredCrew.length;
-                        let q = getRandomNumber(0, w-1);
+                        let q = getRandomNumber(0, w-1);    
                         filteredCrew[q][`position${s}`] = position; 
                         filteredCrew[q].lastPosition.push(position); 
                         filteredCrew[q].lastPosition.shift(); 
@@ -237,21 +239,26 @@ function extraRules(){
 function VCMrules (){
     //CSA check
     const filteredCrew = crewList.filter( x => x.grade === "CSA");
+    let hasCSA = true;
     if (filteredCrew.length === 0){
         positions.CSA.main.pop();
         positions.GR2.main.unshift("CSA")
+        hasCSA = false;
+    }
+    else { //if CSA is present VCM rules need to go additional step (first step is CSA replacement)
+        VCM ++;
     }
     //Crew positions adjustment
     switch(aircraftType) {
         //===========================================================================
         case "A380_3class_ULR":
         case "A380_3class_nonULR":
-            if (VCM >= 1){ //CSA conted towards total crew compliment
+            if (VCM >= 1 && hasCSA === false){ //CSA counted towards total crew compliment
                 positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
                 positions.GR2.main.splice(positions.GR2.main.indexOf("MR3"),1);
                 positions.GR2.main.unshift("MR3 (CSA)");
             }
-            if (VCM >= 2){ 
+            if (VCM >= 2){ //if CSA present, then start fro mthis rule
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML4"),1)
                 positions.GR1.main.splice(positions.GR1.main.indexOf("ML4A"),1)
                 positions.GR1.main.push("ML4 (ML4A)")
@@ -263,8 +270,8 @@ function VCMrules (){
             }
             if (VCM >= 4){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
-                positions.GR1.main.splice(positions.GR1.main.indexOf("ML3A"),1)
-                positions.GR1.main.push("ML3 (ML3A)")
+                positions.GR1.galley.splice(positions.GR1.main.indexOf("ML3A"),1)
+                positions.GR1.galley.push("ML3 (ML3A)")
             }
             if (VCM >= 5 && aircraftType === "A380_3class_ULR"){ 
                 positions.CSV.main.splice(positions.CSV.main.indexOf("ML1"),1)
@@ -285,15 +292,15 @@ function VCMrules (){
         //===========================================================================
         case "A380_2class_ULR":
         case "A380_2class_nonULR":
-            if (VCM >= 1){ 
+            if (VCM >= 1 && hasCSA === false){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
                 positions.GR2.main.splice(positions.GR2.main.indexOf("MR3"),1);
                 positions.GR2.main.unshift("MR3 (CSA)");
             }
             if (VCM >= 2){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
-                positions.GR1.main.splice(positions.GR1.main.indexOf("ML3A"),1)
-                positions.GR1.main.push("ML3 (ML3A)")
+                positions.GR1.galley.splice(positions.GR1.main.indexOf("ML3A"),1)
+                positions.GR1.galley.push("ML3 (ML3A)")
             }
             if (VCM >= 3 && aircraftType === "A380_3class_ULR"){ 
                 positions.CSV.main.splice(positions.CSV.main.indexOf("ML1"),1)
@@ -313,18 +320,18 @@ function VCMrules (){
         break;
         //===========================================================================
         case "B773_2class":
-            if (VCM >= 1){ 
+            if (VCM >= 1 && hasCSA === false){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
                 positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
                 positions.GR2.main.unshift("R3 (CSA)");
             }
             if (VCM >= 2){ 
-                positions.GR2.main.splice(positions.GR2.main.indexOf("L5A"),1);
+                positions.GR2.galley.splice(positions.GR2.main.indexOf("L5A"),1);
             }
             if (VCM >= 3){ 
-                positions.GR1.main.splice(positions.GR1.main.indexOf("L1A"),1);
+                positions.GR1.galley.splice(positions.GR1.main.indexOf("L1A"),1);
                 positions.GR2.main.splice(positions.GR2.main.indexOf("R2"),1);
-                positions.GR1.main.push("R2 (L1A)");
+                positions.GR1.galley.push("R2 (L1A)");
             }
             if (VCM >= 4){ 
                 positions.GR1.main.splice(positions.GR1.main.indexOf("L1"),1);
@@ -339,18 +346,18 @@ function VCMrules (){
         break;
         //===========================================================================
         case "B773_3class":
-            if (VCM >= 1){ 
+            if (VCM >= 1 && hasCSA === false){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
                 positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
                 positions.GR2.main.unshift("R3 (CSA)");
             }
             if (VCM >= 2){ 
-                positions.GR2.main.splice(positions.GR2.main.indexOf("L5A"),1);
+                positions.GR2.galley.splice(positions.GR2.main.indexOf("L5A"),1);
             }
             if (VCM >= 3){ 
-                positions.GR1.main.splice(positions.GR1.main.indexOf("L2A"),1);
+                positions.GR1.galley.splice(positions.GR1.main.indexOf("L2A"),1);
                 positions.GR2.main.splice(positions.GR2.main.indexOf("L4"),1);
-                positions.GR1.main.push("L4 (L2A)");
+                positions.GR1.galley.push("L4 (L2A)");
             }
             if (VCM >= 4){ 
                 positions.CSV.main.splice(positions.CSV.main.indexOf("R2A"),1);
@@ -370,7 +377,7 @@ function VCMrules (){
         break;
         //===========================================================================
         case "B772":
-            if (VCM >= 1){ 
+            if (VCM >= 1 && hasCSA === false){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("CSA"),1);
                 positions.GR2.main.splice(positions.GR2.main.indexOf("R3"),1);
                 positions.GR2.main.unshift("R3 (CSA)");
@@ -384,9 +391,9 @@ function VCMrules (){
                 positions.GR1.main.push("R2 (R1A)");
             }
             if (VCM >= 4){ 
-                positions.GR1.main.splice(positions.GR1.main.indexOf("L1A"),1);
+                positions.GR1.galley.splice(positions.GR1.main.indexOf("L1A"),1);
                 positions.GR2.main.splice(positions.GR2.main.indexOf("L2"),1);
-                positions.GR1.main.push("L2 (L1A)");
+                positions.GR1.galley.push("L2 (L1A)");
             }
             if (VCM >= 5){ 
                 positions.GR1.main.splice(positions.GR1.main.indexOf("L1"),1);
