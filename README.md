@@ -30,7 +30,7 @@ __Possible variants of crew positions on different types of operation:__
 ### Input
 Since I have no information about database structure, I used available source of information to me - cabin crew portal. Crew information can be copied from tag `<div id="tab-crew-0">` or web-scrapped with tools like [cheerio](https://www.npmjs.com/package/cheerio "cheerio") or [puppeteer](https://www.npmjs.com/package/puppeteer "puppeteer").
 
-However, the older [version](https:// "version") of the code uses dummy MongoDB database to pull and push data. And crew information data retrieval can be changed to a database read request in function `loadCrew()`.
+However, the older [version](https://github.com/nevtemu/crew-positions-mongo "version") of the code uses dummy MongoDB database to pull and push data. And crew information data retrieval can be changed to a database read request in function `loadCrew()`.
 
 Same applies for flight settings (type of aircraft, number of sectors, type of operation cargo/passengers ULR/nonULR, flight category etc.). Their can be pulled directly from database, but in my case input manually via html page. I just created "Hide" button to hide them, when printing the output data.
 
@@ -63,6 +63,7 @@ Since different grades can be assigned cargo flights, positions represented in s
 I prepared fields for break allocation and handler for number of sectors. To feature in just need to add function that will read breaks related to allocated position and pass them to crew object. This must be run after function `selectPositons()` since break times depends to working position.
 
 ### Output
+Both input and ouput fields can be styled with side libraries (like Bootstrap), but I wrote this for functionality, not for design. Also JS code will look much nicer for input/output with React (or JS frameworks), but I did not want to include such large library, so used vanila JS.
 I made HTML tablet output for generated positions. This if for printing purposes only (to include in crew pre-flight e-mail). If system generated positions will be implemented, they will be written to database and displayed directly under trip information on cabin crew portal.
 <img src="./src/output.png" />
 
