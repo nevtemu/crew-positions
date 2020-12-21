@@ -535,7 +535,7 @@ function createOutput () {
             if (lastGrade !== item.grade && item.grade == "GR2") {
                 fileContent += `
                     <tr><td class="centerCell" colspan="30" style="background-color:#52BE80">
-                        <b>Economy class class</b>
+                        <b>Economy class</b>
                     </td></tr>`;
             }
             let fileContentInsert = "";
