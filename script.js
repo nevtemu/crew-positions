@@ -88,7 +88,27 @@ function loadCrew (){
         if (n.getElementsByClassName("comment").length >= 1) {
             comment = n.getElementsByClassName("comment")[0].innerHTML;
         }
-        let count = counter;
+        let count;
+        switch (grade){//for purpose of sorting and grade segregation on output
+            case "PUR":
+                count = counter;
+            break;
+            case "CSV":
+                count = 100+counter;
+            break;
+            case "FG1":
+                count = 200+counter;
+            break;
+            case "GR1":
+                count = 300+counter;
+            break;
+            case "GR2":
+                count = 400+counter;
+            break;       
+            case "CSA":
+                count = 500+counter;
+            break;
+        }
         let lastPosition;
         if (grade === "PUR" || grade === "CSA" ){//previous position length=0 so any position can be repeated
             lastPosition = []}
@@ -415,22 +435,26 @@ const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 function outOfGradeRules (){
-    const grades = {"PUR": 5, "CSV":4, "FG1": 3, "GR1":2,"GR2": 1, "CSA":0}; //Used to manipulate grades as numbers/ Since crew can operate only 1 grade higher or 2 grades lower
+    const grades = {"PUR": 5, "CSV":4, "FG1": 3, "GR1":2,"GR2": 1, "CSA":0}; //Used to manipulate grades as numbers. Since crew can operate only 1 grade higher or 2 grades lower
     do{
         let oldGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] > 0);
         let newGrade = Object.keys(outOfGrade).find(key => outOfGrade[key] < 0);
-        if (grades[oldGrade] - grades[newGrade] <= 2 && grades[oldGrade] - grades[newGrade] > 0){ // Crew pulled as lower grade
+        if (grades[oldGrade] - grades[newGrade] <= 2 
+            && grades[oldGrade] - grades[newGrade] > 0){ // Crew pulled as lower grade
             const filterCrew = crewList.filter( x => x.grade === oldGrade);
             filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber); //most junior crew
             filterCrew[0].grade= newGrade; //moves crew to a new grade
             filterCrew[0].originalGrade= oldGrade; 
+            filterCrew[0].count = filterCrew[0].count + (grades[oldGrade] - grades[newGrade])*100;
         }
-        else if (grades[oldGrade] - grades[newGrade] >= -1 && grades[oldGrade] - grades[newGrade] < 0){ // Crew pulled as higher grade
+        else if (grades[oldGrade] - grades[newGrade] >= -1 
+            && grades[oldGrade] - grades[newGrade] < 0){ // Crew pulled as higher grade
             const filterCrew = crewList.filter( x => x.grade === oldGrade);
             filterCrew.sort((a, b) => b.timeInGradeNumber - a.timeInGradeNumber); //most senior crew
             filterCrew[0].grade= newGrade; 
             filterCrew[0].originalGrade= oldGrade; 
             filterCrew[0].timeInGradeNumber = 0; 
+            filterCrew[0].count = filterCrew[0].count - (grades[newGrade] - grades[oldGrade])*100;
         }
         else {//crew pulled out with big grade gap. Only happens to pull as much lower grade
             let middleGrade = Object.keys(grades).find(key => grades[key] === grades[oldGrade] - 2);
@@ -439,12 +463,16 @@ function outOfGradeRules (){
             filterCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
             filterCrew[0].grade= middleGrade; 
             filterCrew[0].originalGrade= oldGrade; 
+            filterCrew[0].count = filterCrew[0].count + (grades[oldGrade] - grades[middleGrade])*100;
             //second crew
             const filterMiddleCrew = crewList.filter( x => x.grade === middleGrade);
             filterMiddleCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
             filterMiddleCrew[0].grade= newGrade; 
             filterMiddleCrew[0].originalGrade= middleGrade; 
+            filterMiddleCrew[0].count = filterMiddleCrew[0].count + (grades[middleGrade] - grades[newGrade])*100;
         }
+        //Need to add rare condition, when high grade missing and low grade pulled out
+        //For example, need Fg1 and pulled Gr2 so all grades need to move up 1 person till filled
         outOfGrade[oldGrade] --;
         outOfGrade[newGrade] ++;
     } while (Object.values(outOfGrade).reduce((a, b) => a + Math.abs(b)) !== 0)
