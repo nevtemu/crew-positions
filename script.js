@@ -480,7 +480,9 @@ function outOfGradeRules (){
 
 //Position handlers for cargo flights simplified since crew work out of grades, no galleys and inflight retail
 function selectPositionsCargo () {
-    positions.forEach((h, index) => crewList[index].position=h)
+    positions.forEach((h, index) => {
+        crewList[index].position1=h
+    })
 }
 function loadPositionsCargo (aType){
     positions = [ ...eval(aType) ]
