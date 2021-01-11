@@ -9,7 +9,7 @@ function generate () { //main function
     loadNumberOfSectors();
     loadCrew();
     if (aircraftType.includes("cargo")){
-        loadPositionsCargo();
+        loadPositionsCargo(aircraftType);
         selectPositionsCargo();
     }
     else {
@@ -482,8 +482,8 @@ function outOfGradeRules (){
 function selectPositionsCargo () {
     positions.forEach((h, index) => crewList[index].position=h)
 }
-function loadPositionsCargo (){
-    positions = [...aircraftType]
+function loadPositionsCargo (aType){
+    positions = [ ...eval(aType) ]
 }
 
 //Renderer draws tablet with crew details and allocated positions
