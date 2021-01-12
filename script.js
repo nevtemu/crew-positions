@@ -574,7 +574,7 @@ const aircraftSelection1 = (type) => {
             field1.innerHTML =
                 `<select name="aircraftType2" id="aircraftType2" onchange="aircraftSelectionA380(this.value)">
                     <option value="1" disabled="" selected="" hidden>Select type</option>
-                    <option value="_3class">3 class</option>
+                    <option value="_3class">3/4 class</option>
                     <option value="_2class">2 class</option>
                     <option value="_cargoInHold">Cargo in hold</option>
                 </select>`;

@@ -70,3 +70,8 @@ I made HTML tablet output for generated positions. This if for printing purposes
 <img src="./src/output.png" />
 
 Thank you.
+
+### Changelog
+- Minimum required crew compliment implemented in VCMrules() function
+- Support galley operator for A380 is not implemented. Since this can be easily assigned by CSV. Otherwise suggested to move support galley operator position into galley type for A380 positions object.
+- 4 class A380 implemented
