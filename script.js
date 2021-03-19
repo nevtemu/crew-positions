@@ -84,6 +84,10 @@ function loadCrew (){
         if (badges.includes("EMIRATESRED TOP SELLER")) {
             ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
         }
+        let pcr = false; //Requirement for PCR test results. March 2021 update
+        if (badges.includes("NEGATIVE PCR IS REQUIRED")) {
+            pcr = true;
+        }
         let comment = "";
         if (n.getElementsByClassName("comment").length >= 1) {
             comment = n.getElementsByClassName("comment")[0].innerHTML;
@@ -132,6 +136,7 @@ function loadCrew (){
             timeInGradeNumber,
             lastPosition,
             inflightRetail: false,
+            pcr,
             ... positionsObject
             }) 
         counter++;
@@ -500,6 +505,7 @@ function createOutput () {
             <tr>
                 <th>Grade</th>
                 <th>Nickname</th>
+                <th>PCR</th>
                 ${headerInsert}
                 <th>Full name</th>
                 <th>Staff number</th>
@@ -547,9 +553,9 @@ function createOutput () {
                         fileContentInsert+=`<td><div contenteditable>${item["break"+s]}</div></td>`;
                     }//end if
             }//end for
-            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
+            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td><td>${item.pcr?'<div class="pcr">PCR</div>':''}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
             //With flags
-            // fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+            // fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td><td>${item.pcr?'<div class="pcr">PCR</div>':''}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
             lastGrade = item.grade;
         }//end createTable()
     let g = header + fileContent + footer;

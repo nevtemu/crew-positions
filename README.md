@@ -75,3 +75,5 @@ Thank you.
 - Minimum required crew compliment implemented in VCMrules() function
 - Support galley operator for A380 is not implemented. Since this can be easily assigned by CSV. Otherwise suggested to move support galley operator position into galley type for A380 positions object.
 - 4 class A380 implemented
+- implemented PCR test requirement check
+- Gr2 as CSA icon not implemented - can not find live example to work with
