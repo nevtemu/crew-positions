@@ -19,6 +19,12 @@
             </select>
             <span id="select2"></span>
             <span id="select3"></span>
+
+            <div>Aircraft registration: A6-E
+                <input id="reg" type="text" maxlength="2" style="width:30px; text-transform:uppercase" onchange="aircraftSelector(this.value)">
+                <span id="description"></span>
+            </div>
+            
             <div>
                 <label for="sectors">Number of sectors:</label>
                 <input type="number" name="sectors" id="numberOfSectors" min="1" max="9" value="1">

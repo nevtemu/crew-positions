@@ -755,3 +755,53 @@ const B773_cargo_nonULR = ["L1", "R1"];
 const B773_cargo_ETOPS = ["L1", "R1", "L2"];
 const B773_cargo_ULR = ["L1", "R1", "L2", "R2"];
 const A380_cargoInHold = ["MR1", "ML1"]
+
+// Breaks. Work in progress
+const B773_ULR = { // Always CRC
+    B773: {PUR: 3, R2A: 1, L5: 2, CSA: 1, FG1:[1,2], GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+    B772: {PUR: 2, R1A: 1, L4: 2, CSA: 1, GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+};
+const B777_nonULR = { // CRC or HBS (hard blocked seats)
+    B773: {PUR: 3, R2A: 1, L5: 2, CSA: 1, FG1:[1,2], GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+    B772: {PUR: 2, R1A: 1, L4: 2, CSA: 1, GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+    HBS_3class: {PUR: 4, R2A: 2, L5: 3, CSA: 3, FG1:[1,2], GR1:[1,3,4], GR2:[1,1,2,2,3,4]},
+    HBS_2class: {PUR: 4, L5: 2, CSA: 3, GR1:[1,2,3], GR2:[1,1,2,2,3,3,4,4]}, //B777-300 2 class
+}; 
+const A380_ULR = { // Always CRC
+    LD: {PUR: 2, ML1: 2, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,1,1,1,2,2,2,2]},
+    MD: {PUR: 2, ML1: 3, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,2,2,2,2,3,3,3], GR2:[1,1,1,1,3,3,3,3]},
+};
+const A380_nonULR = { // YC only 1 CSV and 9 Gr2
+    LD: {PUR: 2, UL1A: 1, ML5: 2, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,1,1,1,1,2,2,2,2]},
+    MD: {PUR: 3, UL1A: 2, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,2,2,3,3,3], GR2:[1,1,1,2,2,2,3,3,3]},
+    HBS_3class: {PUR: 4, UL1A: 2, ML5: 3, CSA: 1, FG1:[1,2,3], GR1:[1,1,2,2,3,3,4,4], GR2:[1,1,2,2,3,3,4,4,4]},
+    HBS_2class: {PUR: 4, ML5: 1, ML1:3, UL1A: 2, CSA: 1, GR1:[1,1,2,3,3,4], GR2:[1,1,2,2,2,3,3,3,4,4,4]}, 
+}; 
+//Aircraft types for breaks calculation. According to registration number
+const fleet = {
+    FHS: {reg: ['QH', 'QI','QJ', 'QK','QL', 'QM', 'QN','QO','QP'], description: "B773 Full heigh suits (with CRC)", crc: true}, 
+    CRC: {reg: ['BQ','BR', 'BU', 'BW', 'BY', 'CA', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CI', 'CJ','CK','CM','CN','CO','CP','CQ','CR','CS','CT','CU','CV','CW','CX','GA','GB','GC','GE','GF','GH','GI'], description: "B773 3 class (with CRC)", crc: true}, 
+    FS3: {reg: ['PV','PW','PX','PY','PZ','QA','QF','QB','QC','QD','QE','QG'], description: "B773 3 class Falcon seats (with CRC)", crc: true}, 
+    FS2: {reg: ['WA', 'WB','WC','WD','WE','WF','WG','WH','WI','WJ'], description: "B772 2 class Falcon seats (with CRC)", crc: true}, 
+    CMC: {reg: ['BJ','BK','BM','BN','BO','GD','GG','GK','GN','GP','GT','GU','GW'], description: "B773 Cargo modified cabin", crc: false}, 
+    HB2: {reg: ['CY','CZ','NA','NB','NC','ND','NF','NH','NI','NO','NW','NY','PE','PG','PQ','PR','PT'], description: "B773 2 class (Hard blocked seats)", crc: false}, 
+    HB3: {reg: ['GJ','GL','GM','GO','GQ','GR','GS','GV','GX','GY','GZ','NE','NG','NJ','NK','NL','NM','NN','NP','NQ','NR','NS','NT','NU','NV','NX','NZ','PA','PB','PC','PD','PF','PH','PI','PJ','PK','PL','PM','PN','PO','PP','PS','PU'], description: "B773 3 class (Hard blocked seats)", crc: false}, 
+}
+function aircraftSelector (input){
+    let desc = document.querySelector("#description");
+    let match = false;
+    if(input.length = 2){
+        Object.keys(fleet).forEach((type)=>{
+            if(fleet[type].reg.includes(input)){
+                desc.innerHTML = fleet[type].description;
+                match = true;
+            }
+        })
+        if (!match){
+            desc.innerHTML = "No such registration"
+        }
+    }
+    else {
+        desc.innerHTML = "Full registration required"
+    }
+}
