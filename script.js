@@ -523,7 +523,8 @@ function createOutput () {
     let lastGrade = ""; 
     crewList.forEach(createTable); 
         function createTable(item, index) {
-            if (lastGrade == "") {
+            if(!aircraftType.includes("cargo"))
+            {if (lastGrade == "") {
                 // item.grade = "PUR"; // добавляет мне праивльный грейд
                 // Create separation lines in tablet between cabins. Decoration for better visuals
                 fileContent += `
@@ -548,7 +549,7 @@ function createOutput () {
                     <tr><td class="centerCell" colspan="30" style="background-color:#52BE80">
                         <b>Economy class</b>
                     </td></tr>`;
-            }
+            }}
             let fileContentInsert = "";
             for (let s=1; s<=numberOfSectors; s++){
                 fileContentInsert+=`<td><div contenteditable>${item["position"+s]}</div></td>`;
