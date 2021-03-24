@@ -70,10 +70,11 @@ I made HTML tablet output for generated positions. This if for printing purposes
 <img src="./src/output.png" />
 
 ### Breaks alocation
-Started work on automatic break allocation. Most of them linked to work positions already and directly specified in crew rest strategies (PUR, CSA, CSV). For others we can select automatically and implement rotation or just link breaks directly to workign position for all crew. Rotation of positions will support rotation of breaks.   
+Started work on automatic break allocation. Most of them linked to work positions already and directly specified in crew rest strategies (PUR, CSA, CSV). For others we can select automatically and implement rotation or just link breaks directly to working position for all crew. Rotation of positions will support rotation of breaks.   
 Totally 12 types of breaks allocation exists (not counting temporarily procedure for long turnarounds):
 <img src="./src/breaks.png" />
    
+I decided to go with random choice of break for first sector and then rotation. This excludes Gr1 break allocation on B777-300 as number of crew on each break is not equal.
 
 Thank you.
 
@@ -83,4 +84,4 @@ Thank you.
 - 4 class A380 implemented
 - implemented PCR test requirement check
 - Gr2 as CSA icon not implemented - can not find live example to work with
-- started work on automatic breaks allocation
+- implemented automatic breaks allocation with break rotation between sectors
