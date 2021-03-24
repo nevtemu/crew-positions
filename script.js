@@ -19,6 +19,7 @@ function generate () { //main function
         for (let s=1; s<=numberOfSectors; s++){
             selectPositions(s);
         }//end for
+        if(hasBreaks){selectBreaks();}
     }//end else
     createOutput();
 }
@@ -241,7 +242,7 @@ function selectPositions (s){
                                     x.grade === grade && 
                                     x[`position${s}`]==="" );
                                 w = filteredCrew.length;
-                                      }//end if (w===0)
+                            }//end if (w===0)
                             let q = getRandomNumber(0, w-1);
                             filteredCrew[q][`position${s}`] = position; 
                             filteredCrew[q].lastPosition.push(position); 
@@ -671,46 +672,93 @@ const B773_cargo_ETOPS = ["L1", "R1", "L2"];
 const B773_cargo_ULR = ["L1", "R1", "L2", "R2"];
 const A380_cargo_cargoInHold = ["MR1", "ML1"]
 
-// Breaks. Work in progress
-const B773_ULR = { // Always CRC
-    B773: {PUR: 3, R2A: 1, L5: 2, CSA: 1, FG1:[1,2], GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
-    B772: {PUR: 2, R1A: 1, L4: 2, CSA: 1, GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+// Breaks allocation
+const breaks = {
+    B773 : {
+        ULR: {
+            CRC: {PUR: 3, R2A: 1, L5: 2, CSA: 1, FG1:[1,2], GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+        }
+    },
+    B772 : {
+        ULR : {
+            CRC: {PUR: 2, R1A: 1, L4: 2, CSA: 1, GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+        }
+    },
+    A380 : {
+        ULR: {
+            LD: {PUR: 2, ML1: 2, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,1,1,1,2,2,2,2]},
+            MD: {PUR: 2, ML1: 3, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,2,2,2,2,3,3,3], GR2:[1,1,1,1,3,3,3,3]}
+        },
+        nonULR: {// YC only 1 CSV and 9 Gr2
+            LD: {PUR: 2, UL1A: 1, ML5: 2, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,1,1,1,1,2,2,2,2]},
+            MD: {PUR: 3, UL1A: 2, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,2,2,3,3,3], GR2:[1,1,1,2,2,2,3,3,3]},
+            HBS: {
+                3: {PUR: 4, UL1A: 2, ML5: 3, CSA: 1, FG1:[1,2,3], GR1:[1,1,2,2,3,3,4,4], GR2:[1,1,2,2,3,3,4,4,4]}, //3 class
+                2: {PUR: 4, ML5: 1, ML1:3, UL1A: 2, CSA: 1, GR1:[1,1,2,3,3,4], GR2:[1,1,2,2,2,3,3,3,4,4,4]} // 2 class
+            }
+        }
+    }
 };
-const B777_nonULR = { // CRC or HBS (hard blocked seats)
-    B773: {PUR: 3, R2A: 1, L5: 2, CSA: 1, FG1:[1,2], GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
-    B772: {PUR: 2, R1A: 1, L4: 2, CSA: 1, GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
-    HBS_3class: {PUR: 4, R2A: 2, L5: 3, CSA: 3, FG1:[1,2], GR1:[1,3,4], GR2:[1,1,2,2,3,4]},
-    HBS_2class: {PUR: 4, L5: 2, CSA: 3, GR1:[1,2,3], GR2:[1,1,2,2,3,3,4,4]}, //B777-300 2 class
-}; 
-const A380_ULR = { // Always CRC
-    LD: {PUR: 2, ML1: 2, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,1,1,1,2,2,2,2]},
-    MD: {PUR: 2, ML1: 3, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,2,2,2,2,3,3,3], GR2:[1,1,1,1,3,3,3,3]},
-};
-const A380_nonULR = { // YC only 1 CSV and 9 Gr2
-    LD: {PUR: 2, UL1A: 1, ML5: 2, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,1,1,1,1,2,2,2,2]},
-    MD: {PUR: 3, UL1A: 2, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,2,2,3,3,3], GR2:[1,1,1,2,2,2,3,3,3]},
-    HBS_3class: {PUR: 4, UL1A: 2, ML5: 3, CSA: 1, FG1:[1,2,3], GR1:[1,1,2,2,3,3,4,4], GR2:[1,1,2,2,3,3,4,4,4]},
-    HBS_2class: {PUR: 4, ML5: 1, ML1:3, UL1A: 2, CSA: 1, GR1:[1,1,2,3,3,4], GR2:[1,1,2,2,2,3,3,3,4,4,4]}, 
-}; 
+breaks.B773.nonULR = {// CRC or HBS (hard blocked seats)
+            CRC: breaks.B773.ULR.CRC,
+            HBS : {
+                3: {PUR: 4, R2A: 2, L5: 3, CSA: 3, FG1:[1,2], GR1:[1,3,4], GR2:[1,1,2,2,3,4]}, // 3 class
+                2: {PUR: 4, L5: 2, CSA: 3, GR1:[1,2,3], GR2:[1,1,2,2,3,3,4,4]}, //B777-300 2 class
+            }
+        };
+breaks.B772.nonULR = {CRC : breaks.B772.ULR.CRC};
+function selectBreaks () {
+    let f = [];
+    // I don't like next line of code, but there was no other way to clone deep nested object (spread operator or Object.assign() led to shallow copy of the original object. I also did not want to use side libraries like lodash for this task)
+    for (let z = 1; z<=numberOfSectors; z++){//Idex 0 of this array will be empty value for clarity in sector numbers
+        f[z] = JSON.parse(JSON.stringify(crc === -1 ? breaks[plane][op2.value]["HBS"][classes] :
+        breaks[plane][op2.value][crc === 1? "CRC" : crc === 2? "LD" : "MD"]))
+    }
+    crewList.forEach(crew => {
+        if(crew.grade ==="PUR" || crew.grade === "CSV" || crew.grade === "CSA"){ //For positions with specific break in crew rest strategy
+            for (let s = 1; s<=numberOfSectors; s++){
+                crew[`break${s}`]=f[s][crew[`position${s}`]]
+            }
+        }
+        else {
+            for (let t = 1; t<=numberOfSectors; t++){
+                let r;
+                if (crew.grade === "GR1"){//with 3 Gr1 one person will have same break on few sectors, so break rotation rule does not apply
+                    r= getRandomNumber(0, f[t][crew.grade].length-1);
+                    crew[`break${t}`]=f[t][crew.grade][r];
+                    f[t][crew.grade].splice(r,1);
+                }
+                else{
+                    do{ r= getRandomNumber(0, f[t][crew.grade].length-1); // This rule ensures positions rotation between sectors
+                        crew[`break${t}`]=f[t][crew.grade][r];
+                        console.log(f[t][crew.grade],crew.grade,crew.nickname,crew[`break${t}`],crew[`break${t-1}`])}
+                    while(crew[`break${t}`]===crew[`break${t-1}`])
+                    f[t][crew.grade].splice(r,1);
+                }
+            }
+        }
+    })//end forEach(crew)
+}
+
 //Aircraft types for breaks calculation according to registration number
 const fleet = {
     //B777
-    FHS: {reg: ['QH', 'QI','QJ', 'QK','QL', 'QM', 'QN','QO','QP'], description: "B773 Full heigh suits (with CRC)", crc: true, planeType: "B773", classes: 3}, 
-    CRC: {reg: ['BQ','BR', 'BU', 'BW', 'BY', 'CA', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CI', 'CJ','CK','CM','CN','CO','CP','CQ','CR','CS','CT','CU','CV','CW','CX','GA','GB','GC','GE','GF','GH','GI'], description: "B773 3 class (with CRC)", crc: true, planeType: "B773", classes: 3}, 
-    FS3: {reg: ['PV','PW','PX','PY','PZ','QA','QF','QB','QC','QD','QE','QG'], description: "B773 3 class Falcon seats (with CRC)", crc: true, planeType: "B773", classes: 3}, 
-    FS2: {reg: ['WA', 'WB','WC','WD','WE','WF','WG','WH','WI','WJ'], description: "B772 2 class Falcon seats (with CRC)", crc: true, planeType: "B772", classes: 2}, 
-    CMC: {reg: ['BJ','BK','BM','BN','BO','GD','GG','GK','GN','GP','GT','GU','GW'], description: "B773 Cargo modified cabin", crc: false, planeType: "B773", classes: 0}, 
-    HB2: {reg: ['CY','CZ','NA','NB','NC','ND','NF','NH','NI','NO','NW','NY','PE','PG','PQ','PR','PT'], description: "B773 2 class (Hard blocked seats)", crc: false, planeType: "B773", classes: 2}, 
-    HB3: {reg: ['GJ','GL','GM','GO','GQ','GR','GS','GV','GX','GY','GZ','NE','NG','NJ','NK','NL','NM','NN','NP','NQ','NR','NS','NT','NU','NV','NX','NZ','PA','PB','PC','PD','PF','PH','PI','PJ','PK','PL','PM','PN','PO','PP','PS','PU'], description: "B773 3 class (Hard blocked seats)", crc: false, planeType: "B773", classes: 3},
+    FHS: {reg: ['QH', 'QI','QJ', 'QK','QL', 'QM', 'QN','QO','QP'], description: "B773 Full heigh suits (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
+    CRC: {reg: ['BQ','BR', 'BU', 'BW', 'BY', 'CA', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CI', 'CJ','CK','CM','CN','CO','CP','CQ','CR','CS','CT','CU','CV','CW','CX','GA','GB','GC','GE','GF','GH','GI'], description: "B773 3 class (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
+    FS3: {reg: ['PV','PW','PX','PY','PZ','QA','QF','QB','QC','QD','QE','QG'], description: "B773 3 class Falcon seats (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
+    FS2: {reg: ['WA', 'WB','WC','WD','WE','WF','WG','WH','WI','WJ'], description: "B772 2 class Falcon seats (with CRC)", crc: 1, planeType: "B772", classes: 2}, 
+    CMC: {reg: ['BJ','BK','BM','BN','BO','GD','GG','GK','GN','GP','GT','GU','GW'], description: "B773 Cargo modified cabin", crc: -1, planeType: "B773", classes: 0}, 
+    HB2: {reg: ['CY','CZ','NA','NB','NC','ND','NF','NH','NI','NO','NW','NY','PE','PG','PQ','PR','PT'], description: "B773 2 class (Hard blocked seats)", crc: -1, planeType: "B773", classes: 2}, 
+    HB3: {reg: ['GJ','GL','GM','GO','GQ','GR','GS','GV','GX','GY','GZ','NE','NG','NJ','NK','NL','NM','NN','NP','NQ','NR','NS','NT','NU','NV','NX','NZ','PA','PB','PC','PD','PF','PH','PI','PJ','PK','PL','PM','PN','PO','PP','PS','PU'], description: "B773 3 class (Hard blocked seats)", crc: -1, planeType: "B773", classes: 3},
     //A380 
-    ANC: {reg: [/*517 seats*/ 'DF', 'DG', 'DH', 'DI', 'DJ', 'DK', 'DL', 'DQ', 'DR', 'DS', 'DT', 'DU', 'DV', 'DW', 'DX', 'EA', 'EB', 'EC', 'ED', 'EE', 'EI', 'EJ', 'EN', 'ER', 'ES', /*519 seats*/ 'EW', 'EX', 'EY', 'EZ', 'OA', 'OB', 'OI','OJ', 'OK','OO','OT','OU','OV','OW','OZ','UA','UC','UB','UD','UM'], description: "A380 3 class (no CRC)", crc: false, planeType: "A380", classes: 3}, 
-    A2C: {reg: ['OP','OQ','OR','OS','OX','OY','UN','UO','UP','UQ','UX','UY','UZ','VA','VB'], description: "A380 2 class (no CRC)", crc: false, planeType: "A380", classes: 2}, 
-    AMD: {reg: [/*489 seats*/ 'DA','DC','DD','DE','DM','DN','DO','DP','DY','DZ','EF','EG','EH','EK','EL','EM','EO','EP','EQ','ET', /*491 seats */ 'EV','OC','OD','OE','OF','OG','OH','OL','OM','ON'], description: "A380 3 class (Main deck CRC)", crc: true, planeType: "A380", classes:3}, 
-    ALD: {reg: ['UE', 'UF', 'UG', 'UH', 'UI', 'UJ', 'UK', 'UL', 'UR', 'US', 'UT', 'UU'], description: "A380 3 class (Lower deck CRC)", crc: true, planeType: "A380", classes: 3}, 
-    ANL: {reg: ['UV', 'UW', 'VC', 'VD', 'VE', 'VF', 'VG', 'VH', 'VI', 'VJ', 'VK', 'VL', 'VM'], description: "A380 3 class New lounge (Lower deck CRC)", crc: true, planeType: "A380", classes:3}
+    ANC: {reg: [/*517 seats*/ 'DF', 'DG', 'DH', 'DI', 'DJ', 'DK', 'DL', 'DQ', 'DR', 'DS', 'DT', 'DU', 'DV', 'DW', 'DX', 'EA', 'EB', 'EC', 'ED', 'EE', 'EI', 'EJ', 'EN', 'ER', 'ES', /*519 seats*/ 'EW', 'EX', 'EY', 'EZ', 'OA', 'OB', 'OI','OJ', 'OK','OO','OT','OU','OV','OW','OZ','UA','UC','UB','UD','UM'], description: "A380 3 class (no CRC)", crc: -1, planeType: "A380", classes: 3}, 
+    A2C: {reg: ['OP','OQ','OR','OS','OX','OY','UN','UO','UP','UQ','UX','UY','UZ','VA','VB'], description: "A380 2 class (no CRC)", crc: -1, planeType: "A380", classes: 2}, 
+    AMD: {reg: [/*489 seats*/ 'DA','DC','DD','DE','DM','DN','DO','DP','DY','DZ','EF','EG','EH','EK','EL','EM','EO','EP','EQ','ET', /*491 seats */ 'EV','OC','OD','OE','OF','OG','OH','OL','OM','ON'], description: "A380 3 class (Main deck CRC)", crc: 3, planeType: "A380", classes:3}, 
+    ALD: {reg: ['UE', 'UF', 'UG', 'UH', 'UI', 'UJ', 'UK', 'UL', 'UR', 'US', 'UT', 'UU'], description: "A380 3 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
+    ANL: {reg: ['UV', 'UW', 'VC', 'VD', 'VE', 'VF', 'VG', 'VH', 'VI', 'VJ', 'VK', 'VL', 'VM'], description: "A380 3 class New lounge (Lower deck CRC)", crc: 2, planeType: "A380", classes:3}
 }
 //Select aircraft type. HTML manipulations
-let aircraftType, plane, classes;
+let aircraftType, plane, classes, crc;
 const op1 = document.querySelector("#operation1");
 const op2 = document.querySelector("#operation2");
 const etops = document.querySelector("#etops");
@@ -729,6 +777,7 @@ function aircraftSelector (input){
                 match = true;
                 plane=fleet[type].planeType;
                 classes = fleet[type].classes;
+                crc = fleet[type].crc; // CRC parameters: -1 -> no crc, 1 -> crc, 2 -> A380 LD CRC, 3 -> A380 MD CRC
             }
         })
         if (!match){desc.innerHTML = "No such registration"}
@@ -767,5 +816,4 @@ function adjustSelection (){
 function operationSelector (){
     // This function is build on legacy objects so its not perfect. If object names will be unified it can look much nicer
     aircraftType = `${plane}_${op1.value === "pax" ? classes+"class": (classes === 0? "cargoModified" : "cargo" )}_${op2.value}`;
-    console.log(aircraftType)
 }
