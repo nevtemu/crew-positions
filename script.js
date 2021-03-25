@@ -5,7 +5,7 @@ let outOfGrade = {}, positionsObject = {position1: ""};
 let hasBreaks = false;
 
 function generate () { //main function
-    loadBreakes();
+    loadBreaks();
     loadNumberOfSectors();
     loadCrew();
     if (aircraftType.includes("cargo")){
@@ -192,7 +192,7 @@ function selectPositions (s){
         for (const r of filterCrew){
             positionsActive[r.grade].forEach((type)=>{
                 if (positionsActive[grade][type].includes(r[`position${s}`])){
-                      positionsActive[grade][type].splice(positionsActive[grade][type].indexOf(r[`position${s}`]),1);
+                    positionsActive[grade][type].splice(positionsActive[grade][type].indexOf(r[`position${s}`]),1);
                 }//end if
             })//end forEach(type)
         }//enf for (const r of filterCrew)
@@ -432,12 +432,18 @@ function VCMrules (){
                 positions.PUR.main.push("L1 (PUR)");
             }
             if (VCM >= 6){
-              console.error("Less than minimum crew requirement to operate")
+                console.error("Less than minimum crew requirement to operate")
             }
         break;
         default:
             console.error("Aircraft type not found!")
     }//end switch
+    if(hasBreaks){
+        let h = crc === -1 ? breaks[plane][op2.value]["HBS"][classes]["GR2"] : breaks[plane][op2.value][crc === 1? "CRC" : crc === 2? "LD" : "MD"]["GR2"];
+        for(let y=1; y<VCM; y++){
+            h.pop();
+        }
+    }
 }
 
 const getRandomNumber = (min, max) =>
@@ -567,7 +573,7 @@ function createOutput () {
     document.querySelector("#output").innerHTML = g;
 }
 function hideShowSettings (){//Event handler for hide settings button
-  document.getElementById("settings").classList.toggle("hidden")
+    document.getElementById("settings").classList.toggle("hidden")
 }
 
 //HTML related secondary functions
@@ -586,7 +592,7 @@ function loadNumberOfSectors () {
         } //end if
     } //end for
 }
-function loadBreakes () {
+function loadBreaks () {
     const k = document.querySelector("#breaks").checked;
     hasBreaks=k;
 }
@@ -673,28 +679,29 @@ const B773_cargo_ULR = ["L1", "R1", "L2", "R2"];
 const A380_cargo_cargoInHold = ["MR1", "ML1"]
 
 // Breaks allocation
+// Breaks numbers sequential for GR2 as they pop() when handling VCM (removing last break in the list)
 const breaks = {
     B773 : {
         ULR: {
-            CRC: {PUR: 3, R2A: 1, L5: 2, CSA: 1, FG1:[1,2], GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+            CRC: {PUR: 3, "R4 (R2A)": 1, R2A: 1, L5: 2, CSA: 1, FG1:[1,2], GR1:[1,2,2], GR2:[1,2,1,2,1,2]},
         }
     },
     B772 : {
         ULR : {
-            CRC: {PUR: 2, R1A: 1, L4: 2, CSA: 1, GR1:[1,2,2], GR2:[1,1,1,2,2,2]},
+            CRC: {PUR: 2, R1A: 1, L4: 2, CSA: 1, GR1:[1,2,2], GR2:[1,2,1,2,1,2]},
         }
     },
     A380 : {
         ULR: {
-            LD: {PUR: 2, ML1: 2, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,1,1,1,2,2,2,2]},
-            MD: {PUR: 2, ML1: 3, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,2,2,2,2,3,3,3], GR2:[1,1,1,1,3,3,3,3]}
+            LD: {PUR: 2, "MR1 (ML1)":2, ML1: 2, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,2,1,2,1,2,1,2]},
+            MD: {PUR: 2, "MR1 (ML1)":3, ML1: 3, UL1A: 1, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,2,2,2,2,3,3,3], GR2:[1,3,1,3,1,3,1,3]}
         },
         nonULR: {// YC only 1 CSV and 9 Gr2
-            LD: {PUR: 2, UL1A: 1, ML5: 2, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,1,1,1,1,2,2,2,2]},
-            MD: {PUR: 3, UL1A: 2, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,2,2,3,3,3], GR2:[1,1,1,2,2,2,3,3,3]},
+            LD: {PUR: 2, UL1A: 1, ML5: 2, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,1,2,2,2,2], GR2:[1,2,1,2,1,2,1,2,1]},
+            MD: {PUR: 3, UL1A: 2, ML5: 1, CSA: 1, FG1:[1,2,3], GR1:[1,1,1,2,2,3,3,3], GR2:[1,2,3,1,2,3,1,2,3]},
             HBS: {
-                3: {PUR: 4, UL1A: 2, ML5: 3, CSA: 1, FG1:[1,2,3], GR1:[1,1,2,2,3,3,4,4], GR2:[1,1,2,2,3,3,4,4,4]}, //3 class
-                2: {PUR: 4, ML5: 1, ML1:3, UL1A: 2, CSA: 1, GR1:[1,1,2,3,3,4], GR2:[1,1,2,2,2,3,3,3,4,4,4]} // 2 class
+                3: {PUR: 4, UL1A: 2, ML5: 3, CSA: 1, FG1:[1,2,3], GR1:[1,1,2,2,3,3,4,4], GR2:[1,2,3,4,1,2,3,4,4]}, //3 class
+                2: {PUR: 4, ML5: 1, ML1:3, UL1A: 2, CSA: 1, GR1:[1,1,2,3,3,4], GR2:[1,2,3,4,1,2,3,4,2,3,4]} // 2 class
             }
         }
     }
@@ -702,8 +709,8 @@ const breaks = {
 breaks.B773.nonULR = {// CRC or HBS (hard blocked seats)
             CRC: breaks.B773.ULR.CRC,
             HBS : {
-                3: {PUR: 4, R2A: 2, L5: 3, CSA: 3, FG1:[1,2], GR1:[1,3,4], GR2:[1,1,2,2,3,4]}, // 3 class
-                2: {PUR: 4, L5: 2, CSA: 3, GR1:[1,2,3], GR2:[1,1,2,2,3,3,4,4]}, //B777-300 2 class
+                3: {PUR: 4, R2A: 2, L5: 3, CSA: 3, FG1:[1,2], GR1:[1,3,4], GR2:[1,2,3,4,1,2]}, // 3 class
+                2: {PUR: 4, L5: 2, CSA: 3, GR1:[1,2,3], GR2:[1,2,3,4,1,2,3,4]}, //B777-300 2 class
             }
         };
 breaks.B772.nonULR = {CRC : breaks.B772.ULR.CRC};
@@ -723,15 +730,14 @@ function selectBreaks () {
         else {
             for (let t = 1; t<=numberOfSectors; t++){
                 let r;
-                if (crew.grade === "GR1"){//with 3 Gr1 one person will have same break on few sectors, so break rotation rule does not apply
+                if (crewList.filter( x => x.grade === crew.grade).length === 3){//with 3 Gr1 one person will have same break on few sectors, so break rotation rule does not apply
                     r= getRandomNumber(0, f[t][crew.grade].length-1);
                     crew[`break${t}`]=f[t][crew.grade][r];
                     f[t][crew.grade].splice(r,1);
                 }
                 else{
                     do{ r= getRandomNumber(0, f[t][crew.grade].length-1); // This rule ensures positions rotation between sectors
-                        crew[`break${t}`]=f[t][crew.grade][r];
-                        console.log(f[t][crew.grade],crew.grade,crew.nickname,crew[`break${t}`],crew[`break${t-1}`])}
+                        crew[`break${t}`]=f[t][crew.grade][r]}
                     while(crew[`break${t}`]===crew[`break${t-1}`])
                     f[t][crew.grade].splice(r,1);
                 }
