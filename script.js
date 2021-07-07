@@ -647,28 +647,17 @@ function selectBreaks (crewList, numberOfSectors, VCM) {
         f[z] = JSON.parse(JSON.stringify(crc === -1 ? breaks[plane][op2.value]["HBS"][classes] :
         breaks[plane][op2.value][crc === 1? "CRC" : crc === 2? "LD" : "MD"]))
     }
-    console.log(f)
     crewList.forEach(crew => {
-        if(crew.grade ==="PUR" || crew.grade === "CSV" || crew.grade === "CSA"){ //For positions with specific break in crew rest strategy
-            for (let s = 1; s<=numberOfSectors; s++){
+        for (let s = 1; s<=numberOfSectors; s++){
+            if(crew.grade ==="PUR" || crew.grade === "CSV" || crew.grade === "CSA"){ //For positions with specific break in crew rest strategy
+            // for (let s = 1; s<=numberOfSectors; s++){
                 crew[`break${s}`]=f[s][crew[`position${s}`]]
             }
-        }
-        else {
-            for (let t = 1; t<=numberOfSectors; t++){
-                let r;
-                if (crewList.filter( x => x.grade === crew.grade).length === 3){//with 3 Gr1 one person will have same break on few sectors, so break rotation rule does not apply
-                    r= getRandomNumber(0, f[t][crew.grade].length-1);
-                    crew[`break${t}`]=f[t][crew.grade][r];
-                    f[t][crew.grade].splice(r,1);
-                }
-                //тут проблема с зацикливанием
-                else{
-                    do{ r= getRandomNumber(0, f[t][crew.grade].length-1); // This rule ensures positions rotation between sectors
-                        crew[`break${t}`]=f[t][crew.grade][r]}
-                    while(crew[`break${t}`]===crew[`break${t-1}`])
-                    f[t][crew.grade].splice(r,1);
-                }
+            else {
+                let filteredBreaks = f[s][crew.grade].filter (e => e !== crew[`break${s-1}`]);
+                if(!filteredBreaks.length){filteredBreaks = f[s][crew.grade]};
+                crew[`break${s}`]=filteredBreaks[getRandomNumber(0,filteredBreaks.length-1)];
+                f[s][crew.grade].splice(f[s][crew.grade].indexOf(crew[`break${s}`]), 1);
             }
         }
     })//end forEach(crew)
