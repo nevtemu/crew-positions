@@ -458,16 +458,11 @@ function selectPositions (s, positions, crewList){
                             x.grade === grade && 
                             x.timeInGradeNumber > 6 && 
                             !x[`position${s}`] && 
-                        !x.inflightRetail); //to not give galley position to IR operator
+                            !x.inflightRetail); //to not give galley position to IR operator
                         const filteredCrewLast = filteredCrew.filter( p => 
                             !p.lastPosition.includes(position));
                         if (filteredCrewLast.length > 0){filteredCrew = filteredCrewLast};
-                        if (filteredCrew.length > 1 && grade === "GR2"){filteredCrew.pop()};//Removes most junior crew - to ensure CSA position given to most junior crew if available
-                        let w = filteredCrew.length;
-                        let q = getRandomNumber(0, w-1);    
-                        filteredCrew[q][`position${s}`] = position; 
-                        filteredCrew[q].lastPosition.push(position); 
-                        filteredCrew[q].lastPosition.shift(); 
+                        allocate(filteredCrew, position)
                         })//end forEach(position)
                 }
                 else {//non-galley positions ("main")
@@ -476,37 +471,39 @@ function selectPositions (s, positions, crewList){
                             const filteredCrew = crewList.filter( x => 
                                 x.grade === grade && 
                                 !x[`position${s}`]);
-                            filteredCrew.sort((a, b) => a.timeInGradeNumber - b.timeInGradeNumber);
-                            filteredCrew[0][`position${s}`] = position;
-                            filteredCrew[0].lastPosition.push(position); 
-                            filteredCrew[0].lastPosition.shift(); 
-                        }//end if
-                        // else if(position === "UR1A"){
-
-
-                        // }
+                            allocate(filteredCrew, position)
+                        }
+                        else if(position === "UR1A"){//to not give UR1A to IR operator
+                            const filteredCrew = crewList.filter( x => 
+                                x.grade === grade && 
+                                !x[`position${s}`] && 
+                                !x.inflightRetail);
+                                allocate(filteredCrew, position)
+                        }
                         else{//non-CSA positions
                             let filteredCrew = crewList.filter( x => 
                                 x.grade === grade && 
                                 !x[`position${s}`] && 
                                 !x.lastPosition.includes(position));
-                            let w = filteredCrew.length;
-                            if (w===0){ //No solution. Ignore last position
+                            if (!filteredCrew.length){ //No solution. Ignore last position
                                 filteredCrew = crewList.filter( x => 
                                     x.grade === grade && 
                                     !x[`position${s}`]);
-                                w = filteredCrew.length;
-                            }//end if (w===0)
-                            let q = getRandomNumber(0, w-1);
-                            filteredCrew[q][`position${s}`] = position; 
-                            filteredCrew[q].lastPosition.push(position); 
-                            filteredCrew[q].lastPosition.shift(); 
+                            }//end if length 0
+                            allocate(filteredCrew, position)
                         }//end else non-CSA
                     })//end forEach(position) 
                 }//end else non-galley
             }//end if position type empty
         })//end forEach(type)
     })//end forEach((grade)
+    function allocate (filteredCrew, position){
+        let w = filteredCrew.length;
+        let q = getRandomNumber(0, w-1);    
+        filteredCrew[q][`position${s}`] = position; 
+        filteredCrew[q].lastPosition.push(position); 
+        filteredCrew[q].lastPosition.shift(); 
+    }
 }
 const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -650,6 +647,7 @@ function selectBreaks (crewList, numberOfSectors, VCM) {
         f[z] = JSON.parse(JSON.stringify(crc === -1 ? breaks[plane][op2.value]["HBS"][classes] :
         breaks[plane][op2.value][crc === 1? "CRC" : crc === 2? "LD" : "MD"]))
     }
+    console.log(f)
     crewList.forEach(crew => {
         if(crew.grade ==="PUR" || crew.grade === "CSV" || crew.grade === "CSA"){ //For positions with specific break in crew rest strategy
             for (let s = 1; s<=numberOfSectors; s++){
@@ -664,6 +662,7 @@ function selectBreaks (crewList, numberOfSectors, VCM) {
                     crew[`break${t}`]=f[t][crew.grade][r];
                     f[t][crew.grade].splice(r,1);
                 }
+                //тут проблема с зацикливанием
                 else{
                     do{ r= getRandomNumber(0, f[t][crew.grade].length-1); // This rule ensures positions rotation between sectors
                         crew[`break${t}`]=f[t][crew.grade][r]}
