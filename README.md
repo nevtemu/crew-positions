@@ -85,3 +85,8 @@ Thank you.
 - implemented PCR test requirement check
 - Gr2 as CSA icon not implemented - can not find live example to work with
 - implemented automatic breaks allocation with break rotation between sectors
+- 7.07.2021 Corrected positions for B777-200. 2 CSV now rostered and 3 Gr1
+- removed temporarily CSA rules from all aircraft types except A380-800 3 class
+- added error handler and error display field in HTML, added tabindex for keyboard navigation
+- moved mid galley position to L3 on all B777 aircrafts
+- fixed empty nickname field for crew without nickname (uses first name instead)

@@ -12,13 +12,13 @@
         <main class="settings" id="settings">
             <section>
                 <label for="reg">Aircraft registration: A6-E</label>
-                <input id="reg" type="text" maxlength="2" style="width:30px; text-transform:uppercase; font-weight: bold;" onchange="aircraftSelector(this.value)">
+                <input tabindex="1" id="reg" type="text" maxlength="2" style="width:30px; text-transform:uppercase; font-weight: bold;" onchange="aircraftSelector(this.value)">
                 <label for="operation1"> Type of operation:</label>
-                <select name="operation1" id="operation1" onchange="adjustSelection()">
+                <select tabindex="2" name="operation1" id="operation1" onchange="adjustSelection()">
                     <option id="pax" value="pax" selected>Passenger</option>
                     <option id="cargo" value="cargo">Cargo</option>
                 </select>
-                <select name="operation2" id="operation2" onchange="adjustSelection()">
+                <select tabindex="3" name="operation2" id="operation2" onchange="adjustSelection()">
                     <option id="nonulr" value="nonULR" selected>nonULR</option>
                     <option id="ulr" value="ULR">ULR</option>
                     <option id="etops" value="ETOPS" hidden>ETOPS</option>
@@ -28,21 +28,25 @@
             </section>         
             <section>
                 <label for="numberOfSectors">Number of sectors:</label>
-                <input type="number" name="sectors" id="numberOfSectors" min="1" max="9" value="1">
+                <input tabindex="4" type="number" name="sectors" id="numberOfSectors" min="1" max="9" value="1">
                 <label for="sectors"> *Turn-around counts as 1 sector</label>
                 <br>
-                <input type="checkbox" name="breaks" id="breaks">
+                <input tabindex="5" type="checkbox" name="breaks" id="breaks">
                 <label for="breaks"> Includes break (for ULR/LR flights)?</label>
             </section>
             <section>
                 <label for="crewData">Enter crew data:</label>
-                <input type="text" name="crew" id="crewData" onchange="dataStats(this.value)"> Current data length: <span id="dataLength"></span>
+                <input tabindex="6" type="text" name="crew" id="crewData" onchange="dataStats(this.value)"> Current data length: <span id="dataLength"></span>
+            </section>
+            <section>
+                <div id="errors"></div>
             </section>
         </main>
         <br>
         <nav>
             <input type="button" value="Hide settings" class="button" id="hideSettings" onclick="hideShowSettings()">
             <input type="button" value="Generate" class="button" id="generateButton" onclick="generate()">
+            <input type="button" value="Clear" class="button" id="clearButton" onclick="clearErrors()">
         </nav>
         <br>
         <div class="ouput" id="output"></div>

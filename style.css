@@ -27,3 +27,23 @@ tr:hover {
     display: inline-block;
     height:14px;
 }
+
+/* Error styles */
+.warn-yellow {
+    background-color:khaki;
+    color:saddlebrown;
+}
+.warn-green {
+    background-color:lightgreen;
+    color:darkgreen;
+}
+.warn-red {
+    background-color:lightpink;
+    color:maroon;
+}
+.warn{
+    border-radius: 5px;
+    padding: 0 7px;
+    margin: 2px 0;
+    font-weight: 300;
+}
