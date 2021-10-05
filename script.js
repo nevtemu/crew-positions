@@ -19,8 +19,9 @@ function generate () { //main function
         }
         outOfGrade = checkOutOfGrade(positions, crewList);
         if (Object.keys(outOfGrade).length > 0){outOfGradeRules(outOfGrade, crewList)}
-        selectIR(crewList); // required before selecting positions yo avoid giving galley/lounge to IR operators
-        for (let s=1; s<=numberOfSectors; s++){selectPositions(s, positions, crewList)}
+        selectIR(crewList, positions, numberOfSectors); // required before selecting positions yo avoid giving galley/lounge to IR operators
+        for (let s=1; s<=numberOfSectors; s++){
+            selectPositions(s, positions, crewList)}
         if(hasBreaks){selectBreaks(crewList, numberOfSectors, VCM);}
     }//end else
     createOutput(numberOfSectors, hasBreaks, crewList);
@@ -153,7 +154,7 @@ const loadPositions = (aType) => {
     const A380_3class_nonULR = { //9 Gr2s on main deck
         PUR: {galley: [], main: ["PUR"]},
         CSV: {galley: [], main: ["ML5", "UL1A"]},
-        FG1: {galley: ["UL1"], main: ["UR1"]},
+        FG1: {galley: ["MR2A"], main: ["UL1","UR1"]},
         GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
         GR2: {galley: ["ML2", "MR4"], main: ["ML1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
         CSA: {galley: [], main: ["CSA"]} //seats at ML2A
@@ -168,10 +169,10 @@ const loadPositions = (aType) => {
     };
     const A380_2class_nonULR = {//9 Gr2s on main deck
         PUR: {galley: [], main: ["PUR"]},
-        CSV: {galley: [], main: ["ML5", "UL1A"]},
+        CSV: {galley: [], main: ["ML5", "ML1", "UL1A"]},
         FG1: {galley: [], main: []},//empty field required so this grade is not skipped when calculation outOfGrade()
         GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A"]},
-        GR2: {galley: ["UC1", "ML2", "MR4"], main: ["UR1", "UL1", "ML1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
+        GR2: {galley: ["UC1", "ML2", "MR4"], main: ["UR1", "UL1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
         CSA: {galley: [], main: []} 
     };
     const B773_2class_ULR = {
@@ -434,13 +435,22 @@ function outOfGradeRules (outOfGrade, crewList){
     } while (Object.values(outOfGrade).reduce((a, b) => a + Math.abs(b)) !== 0)
 }
 //Positions, IR and breaks generators
-function selectIR (crewList){//Sets value true for key inflightRetail
+function selectIR (crewList, positions, sectors){//Sets value true for key inflightRetail
     const filterCrew = crewList.filter( x => x.ratingIR < 21);
+    const positionsDF = {A380: {3: {FG1: "UR1", GR1: "ML4A", GR2: "MR5"}, 2:{GR1: "UR3", GR2: "MR5"}}, "B773":{2:{GR1: "R1", GR2: "UL2"}, 3:{FG1: "R1", GR1: "UL2", GR2: "R3"}}, "B772":{2: {GR1: "R1", GR2: "UL2"}}};
     if (filterCrew.length){
         crewList.sort((a, b) => a.ratingIR - b.ratingIR);
         let x = aircraftType.includes('A380') ? 2 : 1;
         for (let i=0; i<x; i++){
             crewList[i].inflightRetail = true;
+            DFgrade = crewList[i].grade;
+            if (positionsDF[plane][classes][DFgrade]){
+                for (let s=1; s<=sectors; s++){
+                    crewList[i][`position${s}`]=positionsDF[plane][classes][DFgrade];
+                };
+                positions[DFgrade].main.splice(positions[DFgrade].main.indexOf(positionsDF[plane][classes][DFgrade]), 1);
+                delete positionsDF[plane][classes][DFgrade];
+            }
         };
     }
     else {
@@ -547,8 +557,7 @@ function createOutput (numberOfSectors, hasBreaks, crewList) {
                 <th>Rating DF</th>
                 <th>Comment</th>
             </tr>`;
-    const footer = `</table>`;
-    let fileContent = "";
+    const footer = `</table> <br/> <span> * Positions will be adjusted to accommodate MFP 2.0 requirements </span>`;            let fileContent = "";
     let lastGrade = ""; 
     crewList.forEach(createTable); 
         function createTable(item, index) {
@@ -587,9 +596,7 @@ function createOutput (numberOfSectors, hasBreaks, crewList) {
                         fileContentInsert+=`<td><div contenteditable>${item["break"+s]}</div></td>`;
                     }//end if
             }//end for
-            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td><td>${item.pcr?'<div class="pcr">PCR</div>':''}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td>${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
-            //With flags
-            // fileContent += `<tr><td class="centerCell">${item.grade}</td><td>${item.nickname}</td><td>${item.pcr?'<div class="pcr">PCR</div>':''}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/> ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR}</td><td>${item.comment}</td></tr>`;
+            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td><td>${item.pcr?'<div class="pcr">PCR</div>':''}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/>  ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
             lastGrade = item.grade;
         }//end createTable()
     let g = header + fileContent + footer;
@@ -688,6 +695,7 @@ function aircraftSelector (input){
         A2C: {reg: ['OP','OQ','OR','OS','OX','OY','UN','UO','UP','UQ','UX','UY','UZ','VA','VB'], description: "A380 2 class (no CRC)", crc: -1, planeType: "A380", classes: 2}, 
         AMD: {reg: [/*489 seats*/ 'DA','DC','DD','DE','DM','DN','DO','DP','DY','DZ','EF','EG','EH','EK','EL','EM','EO','EP','EQ','ET', /*491 seats */ 'EV','OC','OD','OE','OF','OG','OH','OL','OM','ON'], description: "A380 3 class (Main deck CRC)", crc: 3, planeType: "A380", classes:3}, 
         ALD: {reg: ['UE', 'UF', 'UG', 'UH', 'UI', 'UJ', 'UK', 'UL', 'UR', 'US', 'UT', 'UU'], description: "A380 3 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
+        A4C: {reg: ['VN', 'VO', 'VP'], description: "A380 4 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
         ANL: {reg: ['UV', 'UW', 'VC', 'VD', 'VE', 'VF', 'VG', 'VH', 'VI', 'VJ', 'VK', 'VL', 'VM'], description: "A380 3 class New lounge (Lower deck CRC)", crc: 2, planeType: "A380", classes:3}
     }
     let desc = document.querySelector("#description");
