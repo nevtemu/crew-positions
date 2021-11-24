@@ -94,10 +94,6 @@ function loadCrew (){
         if (badges.includes("EMIRATESRED TOP SELLER")) {
             ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
         }
-        let pcr = false; //Requirement for PCR test results. March 2021 update
-        if (badges.includes("NEGATIVE PCR IS REQUIRED")) {
-            pcr = true;
-        }
         let comment = "";
         if (n.getElementsByClassName("comment").length >= 1) {
             comment = n.getElementsByClassName("comment")[0].innerHTML;
@@ -134,7 +130,6 @@ function loadCrew (){
             timeInGradeNumber,
             lastPosition,
             inflightRetail: false,
-            pcr,
             position1:""
             }) 
         counter++;
@@ -437,7 +432,7 @@ function outOfGradeRules (outOfGrade, crewList){
 //Positions, IR and breaks generators
 function selectIR (crewList, positions, sectors){//Sets value true for key inflightRetail
     const filterCrew = crewList.filter( x => x.ratingIR < 21);
-    const positionsDF = {A380: {3: {FG1: "UR1", GR1: "ML4A", GR2: "MR5"}, 2:{GR1: "UR3", GR2: "MR5"}}, "B773":{2:{GR1: "R1", GR2: "UL2"}, 3:{FG1: "R1", GR1: "UL2", GR2: "R3"}}, "B772":{2: {GR1: "R1", GR2: "UL2"}}};
+    const positionsDF = {A380: {3: {FG1: "UR1", GR1: "ML4A", GR2: "MR5"}, 2:{GR1: "UR3", GR2: "MR5"}}, "B773":{2:{GR1: "R1", GR2: "L2"}, 3:{FG1: "R1", GR1: "L2", GR2: "R3"}}, "B772":{2: {GR1: "R1", GR2: "L2"}}};
     if (filterCrew.length){
         crewList.sort((a, b) => a.ratingIR - b.ratingIR);
         let x = aircraftType.includes('A380') ? 2 : 1;
@@ -547,7 +542,6 @@ function createOutput (numberOfSectors, hasBreaks, crewList) {
             <tr>
                 <th>Grade</th>
                 <th>Nickname</th>
-                <th>PCR</th>
                 ${headerInsert}
                 <th>Full name</th>
                 <th>Staff number</th>
@@ -596,7 +590,7 @@ function createOutput (numberOfSectors, hasBreaks, crewList) {
                         fileContentInsert+=`<td><div contenteditable>${item["break"+s]}</div></td>`;
                     }//end if
             }//end for
-            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td><td>${item.pcr?'<div class="pcr">PCR</div>':''}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/>  ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
+            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/>  ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
             lastGrade = item.grade;
         }//end createTable()
     let g = header + fileContent + footer;
@@ -695,7 +689,7 @@ function aircraftSelector (input){
         A2C: {reg: ['OP','OQ','OR','OS','OX','OY','UN','UO','UP','UQ','UX','UY','UZ','VA','VB'], description: "A380 2 class (no CRC)", crc: -1, planeType: "A380", classes: 2}, 
         AMD: {reg: [/*489 seats*/ 'DA','DC','DD','DE','DM','DN','DO','DP','DY','DZ','EF','EG','EH','EK','EL','EM','EO','EP','EQ','ET', /*491 seats */ 'EV','OC','OD','OE','OF','OG','OH','OL','OM','ON'], description: "A380 3 class (Main deck CRC)", crc: 3, planeType: "A380", classes:3}, 
         ALD: {reg: ['UE', 'UF', 'UG', 'UH', 'UI', 'UJ', 'UK', 'UL', 'UR', 'US', 'UT', 'UU'], description: "A380 3 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
-        A4C: {reg: ['VN', 'VO', 'VP'], description: "A380 4 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
+        A4C: {reg: ['VN', 'VO', 'VP', 'VQ'], description: "A380 4 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
         ANL: {reg: ['UV', 'UW', 'VC', 'VD', 'VE', 'VF', 'VG', 'VH', 'VI', 'VJ', 'VK', 'VL', 'VM'], description: "A380 3 class New lounge (Lower deck CRC)", crc: 2, planeType: "A380", classes:3}
     }
     let desc = document.querySelector("#description");
