@@ -95,7 +95,7 @@ Thank you.
 - corrected positions for A380 3 class
 - implemented recommended positions for inflight retail operators
 - added 4 class A380
-- added reminder about MFP 2.0 related changes in the output file
+- added reminder about MFP 2.0 related changes in the output file     
 24.11.2021     
 - fixed bug with inflight retail positions
 - PCR check completely removed since 100% vaccination requirement 

@@ -11,15 +11,18 @@ function generate () { //main function
         selectPositionsCargo();
     }
     else {
+        let positionsDF = {A380: {3: {FG1: "UR1", GR1: "ML4A", GR2: "MR5"}, 2:{GR1: "UR3", GR2: "MR5"}}, 
+                    B773:{2:{GR1: "R1", GR2: "L2"}, 3:{FG1: "R1", GR1: "L2", GR2: "R3"}}, 
+                    B772:{2: {GR1: "R1", GR2: "L2"}}};
         positions = loadPositions(aircraftType);
         VCM = checkVCM (positions, crewList);
         if(VCM){
             errorHandler(`VCM ${VCM} operation`, "yellow");
-            VCM > 0 ? VCMrules(VCM, positions, hasBreaks) : extraRules(VCM, positions);
+            VCM > 0 ? VCMrules(VCM, positions, hasBreaks, positionsDF) : extraRules(VCM, positions);
         }
         outOfGrade = checkOutOfGrade(positions, crewList);
         if (Object.keys(outOfGrade).length > 0){outOfGradeRules(outOfGrade, crewList)}
-        selectIR(crewList, positions, numberOfSectors); // required before selecting positions yo avoid giving galley/lounge to IR operators
+        selectIR(crewList, positions, numberOfSectors, positionsDF); // required before selecting positions yo avoid giving galley/lounge to IR operators
         for (let s=1; s<=numberOfSectors; s++){
             selectPositions(s, positions, crewList)}
         if(hasBreaks){selectBreaks(crewList, numberOfSectors, VCM);}
@@ -59,14 +62,17 @@ function loadCrew (){
             content.indexOf(`&nbsp;`)
             )
             .replace("Korea, Republic Of", "Korea")//Replace few official countries names for easy reading
+            .replace("Moldova, Republic Of", "Moldova")
             .replace("Czech Republic", "Czech")
             .replace("Taiwan, Province Of China", "Taiwan")
             .replace("United Arab Emirates", "UAE")
             .replace("Russian Federation", "Russia")
+            .replace("Bosnia And Herzegovina", "Bosnia")
+            .replace("Republic Of Macedonia", "Macedonia")
             .trim();
         const languages = content.substring(
             content.indexOf("Languages:</b> ") + 15,
-            content.indexOf(`</p>      <p><b>CCM:`)
+            content.indexOf(`</p>      <p><b>CCM:`) ==-1 ? content.indexOf(`</p><span class="CrewFlightExperience">`) : content.indexOf(`</p>      <p><b>CCM:`) //this check is for rare case, when crew has no CCM
             )
             .replace("Ukranian", "Ukrainian");//Grammar correction
         let timeInGrade;
@@ -228,7 +234,7 @@ function extraRules(VCM, positions){
         positions.GR2.main.push(EXTRA[aircraftType].shift())
     }
 }
-function VCMrules (VCM, positions, hasBreaks){
+function VCMrules (VCM, positions, hasBreaks, positionsDF){
     //Crew positions adjustment
     switch(aircraftType) {
         //===========================================================================
@@ -238,11 +244,14 @@ function VCMrules (VCM, positions, hasBreaks){
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML4"),1)
                 positions.GR1.main.splice(positions.GR1.main.indexOf("ML4A"),1)
                 positions.GR1.main.push("ML4 (ML4A)")
+                console.log(positionsDF.A380[3].GR1)
+                positionsDF.A380[3].GR1 = "ML4 (ML4A)"
             }
             if (VCM >= 2){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("MR5"),1)
                 positions.GR1.main.splice(positions.GR1.main.indexOf("MR4A"),1)
                 positions.GR1.main.push("MR5 (MR4A)")
+                delete positionsDF.A380[3].GR2
             }
             if (VCM >= 3){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
@@ -430,12 +439,13 @@ function outOfGradeRules (outOfGrade, crewList){
     } while (Object.values(outOfGrade).reduce((a, b) => a + Math.abs(b)) !== 0)
 }
 //Positions, IR and breaks generators
-function selectIR (crewList, positions, sectors){//Sets value true for key inflightRetail
+function selectIR (crewList, positions, sectors, positionsDF){//Sets value true for key inflightRetail
     const filterCrew = crewList.filter( x => x.ratingIR < 21);
-    const positionsDF = {A380: {3: {FG1: "UR1", GR1: "ML4A", GR2: "MR5"}, 2:{GR1: "UR3", GR2: "MR5"}}, "B773":{2:{GR1: "R1", GR2: "L2"}, 3:{FG1: "R1", GR1: "L2", GR2: "R3"}}, "B772":{2: {GR1: "R1", GR2: "L2"}}};
     if (filterCrew.length){
         crewList.sort((a, b) => a.ratingIR - b.ratingIR);
-        let x = aircraftType.includes('A380') ? 2 : 1;
+        let pre_x = aircraftType.includes('A380') ? 2 : 1;
+        let x = filterCrew.length >= pre_x ? pre_x : 1;
+        if (x != pre_x) errorHandler("Not enough IR rating crew", "red");
         for (let i=0; i<x; i++){
             crewList[i].inflightRetail = true;
             DFgrade = crewList[i].grade;
@@ -679,17 +689,17 @@ function aircraftSelector (input){
         //B777
         FHS: {reg: ['QH', 'QI','QJ', 'QK','QL', 'QM', 'QN','QO','QP'], description: "B773 Full heigh suits (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
         CRC: {reg: ['BQ','BR', 'BU', 'BW', 'BY', 'CA', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CI', 'CJ','CK','CM','CN','CO','CP','CQ','CR','CS','CT','CU','CV','CW','CX','GA','GB','GC','GE','GF','GH','GI'], description: "B773 3 class (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
-        FS3: {reg: ['PV','PW','PX','PY','PZ','QA','QF','QB','QC','QD','QE','QG'], description: "B773 3 class Falcon seats (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
+        FS3: {reg: ['PV','PW','PX','PY','PZ','QA','QB','QC','QD','QE','QF','QG'], description: "B773 3 class Falcon seats (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
         FS2: {reg: ['WA', 'WB','WC','WD','WE','WF','WG','WH','WI','WJ'], description: "B772 2 class Falcon seats (with CRC)", crc: 1, planeType: "B772", classes: 2}, 
         CMC: {reg: ['BJ','BK','BM','BN','BO','GD','GG','GK','GN','GP','GT','GU','GW'], description: "B773 Cargo modified cabin", crc: -1, planeType: "B773", classes: 0}, 
         HB2: {reg: ['CY','CZ','NA','NB','NC','ND','NF','NH','NI','NO','NW','NY','PE','PG','PQ','PR','PT'], description: "B773 2 class (Hard blocked seats)", crc: -1, planeType: "B773", classes: 2}, 
         HB3: {reg: ['GJ','GL','GM','GO','GQ','GR','GS','GV','GX','GY','GZ','NE','NG','NJ','NK','NL','NM','NN','NP','NQ','NR','NS','NT','NU','NV','NX','NZ','PA','PB','PC','PD','PF','PH','PI','PJ','PK','PL','PM','PN','PO','PP','PS','PU'], description: "B773 3 class (Hard blocked seats)", crc: -1, planeType: "B773", classes: 3},
         //A380 
-        ANC: {reg: [/*517 seats*/ 'DF', 'DG', 'DH', 'DI', 'DJ', 'DK', 'DL', 'DQ', 'DR', 'DS', 'DT', 'DU', 'DV', 'DW', 'DX', 'EA', 'EB', 'EC', 'ED', 'EE', 'EI', 'EJ', 'EN', 'ER', 'ES', /*519 seats*/ 'EW', 'EX', 'EY', 'EZ', 'OA', 'OB', 'OI','OJ', 'OK','OO','OT','OU','OV','OW','OZ','UA','UC','UB','UD','UM'], description: "A380 3 class (no CRC)", crc: -1, planeType: "A380", classes: 3}, 
+        ANC: {reg: [/*517 seats*/ 'DF', 'DG', 'DH', 'DI', 'DJ', 'DK', 'DL', 'DQ', 'DR', 'DS', 'DT', 'DU', 'DV', 'DW', 'DX', 'EA', 'EB', 'EC', 'ED', 'EE', 'EI', 'EJ', 'EN', 'ER', 'ES', /*519 seats*/ 'EW', 'EX', 'EY', 'EZ', 'OA', 'OB', 'OI','OJ', 'OK','OO','OT','OU','OV','OW','OZ','UA','UB','UC','UD','UM'], description: "A380 3 class (no CRC)", crc: -1, planeType: "A380", classes: 3}, 
         A2C: {reg: ['OP','OQ','OR','OS','OX','OY','UN','UO','UP','UQ','UX','UY','UZ','VA','VB'], description: "A380 2 class (no CRC)", crc: -1, planeType: "A380", classes: 2}, 
-        AMD: {reg: [/*489 seats*/ 'DA','DC','DD','DE','DM','DN','DO','DP','DY','DZ','EF','EG','EH','EK','EL','EM','EO','EP','EQ','ET', /*491 seats */ 'EV','OC','OD','OE','OF','OG','OH','OL','OM','ON'], description: "A380 3 class (Main deck CRC)", crc: 3, planeType: "A380", classes:3}, 
+        AMD: {reg: [/*489 seats*/ 'DA','DC','DD','DE','DM','DN','DO','DP','DY','DZ','EF','EG','EH','EK','EL','EM','EO','EP','EQ','ET', /*491 seats */ 'EU','EV','OC','OD','OE','OF','OG','OH','OL','OM','ON'], description: "A380 3 class (Main deck CRC)", crc: 3, planeType: "A380", classes:3}, 
         ALD: {reg: ['UE', 'UF', 'UG', 'UH', 'UI', 'UJ', 'UK', 'UL', 'UR', 'US', 'UT', 'UU'], description: "A380 3 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
-        A4C: {reg: ['VN', 'VO', 'VP', 'VQ'], description: "A380 4 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
+        A4C: {reg: ['VN', 'VO', 'VP', 'VQ', 'VR','VS'], description: "A380 4 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
         ANL: {reg: ['UV', 'UW', 'VC', 'VD', 'VE', 'VF', 'VG', 'VH', 'VI', 'VJ', 'VK', 'VL', 'VM'], description: "A380 3 class New lounge (Lower deck CRC)", crc: 2, planeType: "A380", classes:3}
     }
     let desc = document.querySelector("#description");
