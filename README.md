@@ -99,3 +99,8 @@ Thank you.
 24.11.2021     
 - fixed bug with inflight retail positions
 - PCR check completely removed since 100% vaccination requirement 
+24.05.2022
+- Fixed conflict between VCM and IR allocation. Added addition VCM rules
+- Fixed rare bug for crew without CPM
+- Updated fleet data
+- Added short names for Macedonia, Bosnia, Moldova
