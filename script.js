@@ -14,21 +14,24 @@ function generate () { //main function
         let positionsDF = {A380: {3: {FG1: "UR1", GR1: "ML4A", GR2: "MR5"}, 2:{GR1: "UR3", GR2: "MR5"}}, 
                     B773:{2:{GR1: "R1", GR2: "L2"}, 3:{FG1: "R1", GR1: "L2", GR2: "R3"}}, 
                     B772:{2: {GR1: "R1", GR2: "L2"}}};
+        positionsDF.A380[4]= positionsDF.A380[3];
+        let positionsW = {CSV: ["ML1"], GR2: ["MR3A", "MR1"]}; //No junior crew allocated W cabin -- only 4 class A380
         positions = loadPositions(aircraftType);
         VCM = checkVCM (positions, crewList);
         if(VCM){
             errorHandler(`VCM ${VCM} operation`, "yellow");
-            VCM > 0 ? VCMrules(VCM, positions, hasBreaks, positionsDF) : extraRules(VCM, positions);
+            VCM > 0 ? VCMrules(VCM, positions, positionsDF, positionsW) : extraRules(VCM, positions);
         }
         outOfGrade = checkOutOfGrade(positions, crewList);
         if (Object.keys(outOfGrade).length > 0){outOfGradeRules(outOfGrade, crewList)}
+        if(classes==4){
+            selectW(crewList, positions, numberOfSectors, positionsW)}
         selectIR(crewList, positions, numberOfSectors, positionsDF); // required before selecting positions yo avoid giving galley/lounge to IR operators
         for (let s=1; s<=numberOfSectors; s++){
             selectPositions(s, positions, crewList)}
         if(hasBreaks){selectBreaks(crewList, numberOfSectors, VCM);}
     }//end else
     createOutput(numberOfSectors, hasBreaks, crewList);
-    console.table(crewList)
 }
 // DATA LOADERS
 function loadBreaks () {
@@ -100,6 +103,7 @@ function loadCrew (){
         if (badges.includes("EMIRATESRED TOP SELLER")) {
             ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
         }
+        let qualifiedW = badges.includes("PREMIUM ECONOMY CREW") ? true : false;
         let comment = "";
         if (n.getElementsByClassName("comment").length >= 1) {
             comment = n.getElementsByClassName("comment")[0].innerHTML;
@@ -136,6 +140,8 @@ function loadCrew (){
             timeInGradeNumber,
             lastPosition,
             inflightRetail: false,
+            qualifiedW,
+            operatingW : qualifiedW,
             position1:""
             }) 
         counter++;
@@ -150,7 +156,7 @@ const loadPositions = (aType) => {
         FG1: {galley: ["MR2A"], main: ["UR1", "UL1"]},
         GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
         GR2: {galley: ["ML2", "MR4"], main: ["MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
-        CSA: {galley: [], main: ["CSA"]} //seats at ML2A
+        CSA: {galley: [], main: ["CSA"]} //sits at ML2A
     };
     const A380_3class_nonULR = { //9 Gr2s on main deck
         PUR: {galley: [], main: ["PUR"]},
@@ -158,8 +164,17 @@ const loadPositions = (aType) => {
         FG1: {galley: ["MR2A"], main: ["UL1","UR1"]},
         GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
         GR2: {galley: ["ML2", "MR4"], main: ["ML1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
-        CSA: {galley: [], main: ["CSA"]} //seats at ML2A
+        CSA: {galley: [], main: ["CSA"]} //sits at ML2A
     };
+    const A380_4class_nonULR = { 
+        PUR: {galley: [], main: ["PUR"]},
+        CSV: {galley: [], main: ["ML5", "UL1A", "ML1"]},
+        FG1: {galley: ["MR2A"], main: ["UL1","UR1"]},
+        GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
+        GR2: {galley: ["ML2", "MR4", "MR3A"], main: ["MR5", "ML3", "ML4", "MR3", "MR2", "MR1"]},
+        CSA: {galley: [], main: ["CSA"]} //sits at ML2A
+    };
+    const A380_4class_ULR = A380_4class_nonULR;
     const A380_2class_ULR = {//On ULR 2 CSV in YC
         PUR: {galley: [], main: ["PUR"]},
         CSV: {galley: [], main: ["ML5", "UL1A", "ML1"]},
@@ -219,7 +234,7 @@ function extraRules(VCM, positions){
     //For rare case, when operating with additional crew. This happens when for example 3 class crew set on return sector operates 2 class aircraft
     const EXTRA = {
         A380_3class_ULR: ["MR3A"],
-        A380_3class_nonULR: ["MR3A", "MR2A"],
+        A380_3class_nonULR: ["MR3A", "ML2A"],
         B773_cargo_ULR: ["L3", "L4", "R4", "R3", "L5", "R5", "R5A", "R5C", "L5A"],
         B773_cargo_ETOPS: ["R2", "L3", "L4", "R4", "R3", "L5", "R5", "R5A", "R5C", "L5A"],
         B773_cargo_nonULR: ["L2", "R2", "L3", "L4", "R4", "R3", "L5", "R5", "R5A", "R5C", "L5A"],
@@ -228,13 +243,14 @@ function extraRules(VCM, positions){
         A380_cargo_cargoInHold: ["MR2", "ML2", "ML2A", "MR2A", "ML3", "MR3", "ML3A", "MR3A", "ML4", "MR4", "ML4A", "MR4A", "ML5", "MR5", "UL1", "UR1", "UR1A", "UL1A", "UL2", "UR2", "UL3", "UR3"]
     }
     EXTRA.A380_2class_nonULR = EXTRA.A380_2class_ULR = ["MR3A", "MR2A", "ML4A", "MR4A", "ML2A"];
+    EXTRA.A380_4class_nonULR = EXTRA.A380_4class_ULR = [];
     EXTRA.B773_2class_ULR = EXTRA.B773_2class_nonULR = EXTRA.B773_3class_ULR = EXTRA.B773_3class_nonULR = ["R5A", "R5C"];
     EXTRA.B772_2class_ULR = EXTRA.B772_2class_nonULR = ["R4A", "R4C"];
     for (let f=0; f>VCM; f--){
         positions.GR2.main.push(EXTRA[aircraftType].shift())
     }
 }
-function VCMrules (VCM, positions, hasBreaks, positionsDF){
+function VCMrules (VCM, positions, positionsDF, positionsW){
     //Crew positions adjustment
     switch(aircraftType) {
         //===========================================================================
@@ -244,7 +260,6 @@ function VCMrules (VCM, positions, hasBreaks, positionsDF){
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML4"),1)
                 positions.GR1.main.splice(positions.GR1.main.indexOf("ML4A"),1)
                 positions.GR1.main.push("ML4 (ML4A)")
-                console.log(positionsDF.A380[3].GR1)
                 positionsDF.A380[3].GR1 = "ML4 (ML4A)"
             }
             if (VCM >= 2){ 
@@ -271,6 +286,42 @@ function VCMrules (VCM, positions, hasBreaks, positionsDF){
                 positions.PUR.main.push("ML1 (PUR)")
             }
             if (VCM >= 5){
+                errorHandler("Less than minimum crew requirement to operate", "red")
+            }
+        break;
+        //===========================================================================
+        case "A380_4class_ULR":
+        case "A380_4class_nonULR":
+            if (VCM >= 1){ 
+                positions.GR2.galley.splice(positions.GR2.galley.indexOf("MR3A"),1)
+                positionsW.GR2.shift()
+                positionsW.GR2.push("MR2 (MR3AA)")
+            }
+            if (VCM >= 2){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("ML4"),1)
+                positions.GR1.main.splice(positions.GR1.main.indexOf("ML4A"),1)
+                positions.GR1.main.push("ML4 (ML4A)")
+                positionsDF.A380[4].GR1 = "ML4 (ML4A)"
+            }
+            if (VCM >= 3){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("MR5"),1)
+                positions.GR1.main.splice(positions.GR1.main.indexOf("MR4A"),1)
+                positions.GR1.main.push("MR5 (MR4A)")
+                delete positionsDF.A380[4].GR2
+            }
+            if (VCM >= 4){ 
+                positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
+                positions.GR1.galley.splice(positions.GR1.main.indexOf("ML3A"),1)
+                positions.GR1.galley.push("ML3 (ML3A)")
+            }
+            if (VCM >= 5){ 
+                positions.CSV.main.splice(positions.CSV.main.indexOf("ML1"),1)
+                positions.PUR.main.splice(positions.PUR.main.indexOf("PUR"),1)
+                positions.GR2.main.splice(positions.GR2.main.indexOf("MR1"),1)
+                positions.PUR.main.push("ML1 (PUR)")
+                positions.CSV.main.push("MR1 (ML1)")
+            }
+            if (VCM >= 6){
                 errorHandler("Less than minimum crew requirement to operate", "red")
             }
         break;
@@ -438,7 +489,33 @@ function outOfGradeRules (outOfGrade, crewList){
         outOfGrade[newGrade] ++;
     } while (Object.values(outOfGrade).reduce((a, b) => a + Math.abs(b)) !== 0)
 }
-//Positions, IR and breaks generators
+//Positions, W, IR and breaks generators   
+function selectW (crewList, positions, sectors, positionsW){//Pre-allocates positions for premium economy crew
+    //Check if enough W crew. If not - add most senior crew to W list
+    Object.keys(positionsW).forEach((grade)=>{
+        if (grade.length > crewList.filter( x => x.qualifiedW && x.grade == grade).length){
+            let availableCrew = crewList.filter( x => x.qualifiedW == false && x.grade == grade)
+            availableCrew.sort((a, b) => a.timeInGrade - b.timeInGrade);
+            for (let i = positionsW[grade].length - crewList.filter( x => x.qualifiedW && x.grade == grade).length; i>0; i--){
+                crewList.find(y = y.staffNumber == availableCrew[0].staffNumber).operatingW = true;
+                availableCrew.shift();
+            }//end for
+        }//end if
+    }) //end forEach
+    for (let s=1; s<=sectors; s++){
+        Object.keys(positionsW).forEach((grade)=>{
+            positionsW[grade].forEach((position)=>{
+                let crewWW = crewList.filter(x => x.grade === grade && x.operatingW && !x.lastPosition.every(v => positionsW[grade].includes(v)) && (x[`position${s}`] == "" || !x.hasOwnProperty(`position${s}`)));
+                if (!crewWW.length){
+                    crewWW = crewList.filter(x => x.grade === grade && x.operatingW && !x.hasOwnProperty(`position${s}`));
+                }
+                allocate(crewWW, position, s)
+            })})//End of both forEach
+    }//end for
+    positions.CSV.main.pop();
+    positions.GR2.main.pop();
+    positions.GR2.galley.pop();
+}
 function selectIR (crewList, positions, sectors, positionsDF){//Sets value true for key inflightRetail
     const filterCrew = crewList.filter( x => x.ratingIR < 21);
     if (filterCrew.length){
@@ -449,12 +526,14 @@ function selectIR (crewList, positions, sectors, positionsDF){//Sets value true 
         for (let i=0; i<x; i++){
             crewList[i].inflightRetail = true;
             DFgrade = crewList[i].grade;
-            if (positionsDF[plane][classes][DFgrade]){
+            if (positionsDF[plane][classes][DFgrade] && !crewList[i].operatingW){
                 for (let s=1; s<=sectors; s++){
-                    crewList[i][`position${s}`]=positionsDF[plane][classes][DFgrade];
+                        crewList[i][`position${s}`]=positionsDF[plane][classes][DFgrade];
                 };
                 positions[DFgrade].main.splice(positions[DFgrade].main.indexOf(positionsDF[plane][classes][DFgrade]), 1);
                 delete positionsDF[plane][classes][DFgrade];
+            } else if (positionsDF[plane][classes][DFgrade] && !crewList[i].operatingW) {
+                errorHandler("W and IR conflict", "yellow")
             }
         };
     }
@@ -474,10 +553,15 @@ function selectPositions (s, positions, crewList){
                             x.timeInGradeNumber > 6 && 
                             !x[`position${s}`] && 
                             !x.inflightRetail); //to not give galley position to IR operator
+                        if (!filteredCrew.length)
+                            {filteredCrew = crewList.filter( x => 
+                            x.grade === grade && 
+                            !x[`position${s}`] && 
+                            !x.inflightRetail);}
                         const filteredCrewLast = filteredCrew.filter( p => 
                             !p.lastPosition.includes(position));
                         if (filteredCrewLast.length > 0){filteredCrew = filteredCrewLast};
-                        allocate(filteredCrew, position)
+                        allocate(filteredCrew, position, s)
                         })//end forEach(position)
                 }
                 else {//non-galley positions ("main")
@@ -486,14 +570,14 @@ function selectPositions (s, positions, crewList){
                             const filteredCrew = crewList.filter( x => 
                                 x.grade === grade && 
                                 !x[`position${s}`]);
-                            allocate(filteredCrew, position)
+                            allocate(filteredCrew, position, s)
                         }
                         else if(position === "UR1A"){//to not give UR1A to IR operator
                             const filteredCrew = crewList.filter( x => 
                                 x.grade === grade && 
                                 !x[`position${s}`] && 
                                 !x.inflightRetail);
-                                allocate(filteredCrew, position)
+                                allocate(filteredCrew, position, s)
                         }
                         else{//non-CSA positions
                             let filteredCrew = crewList.filter( x => 
@@ -505,20 +589,21 @@ function selectPositions (s, positions, crewList){
                                     x.grade === grade && 
                                     !x[`position${s}`]);
                             }//end if length 0
-                            allocate(filteredCrew, position)
+                            allocate(filteredCrew, position, s)
                         }//end else non-CSA
                     })//end forEach(position) 
                 }//end else non-galley
             }//end if position type empty
         })//end forEach(type)
     })//end forEach((grade)
-    function allocate (filteredCrew, position){
-        let w = filteredCrew.length;
-        let q = getRandomNumber(0, w-1);    
-        filteredCrew[q][`position${s}`] = position; 
-        filteredCrew[q].lastPosition.push(position); 
-        filteredCrew[q].lastPosition.shift(); 
-    }
+}
+function allocate (filteredCrew, position, s){
+    let w = filteredCrew.length;
+    let q = getRandomNumber(0, w-1);    
+    filteredCrew[q][`position${s}`] = position; 
+    // console.log(filteredCrew[q].nickname, "  =>  ", position)
+    filteredCrew[q].lastPosition.push(position); 
+    filteredCrew[q].lastPosition.shift()
 }
 const getRandomNumber = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -558,7 +643,7 @@ function createOutput (numberOfSectors, hasBreaks, crewList) {
                 <th>Nationality</th>
                 <th>Languages</th>
                 <th>Time in grade</th>
-                <th>Rating DF</th>
+                <th>Badges</th>
                 <th>Comment</th>
             </tr>`;
     const footer = `</table> <br/> <span> * Positions will be adjusted to accommodate MFP 2.0 requirements </span>`;            let fileContent = "";
@@ -600,7 +685,10 @@ function createOutput (numberOfSectors, hasBreaks, crewList) {
                         fileContentInsert+=`<td><div contenteditable>${item["break"+s]}</div></td>`;
                     }//end if
             }//end for
-            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/>  ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${item.ratingIR<=20?item.ratingIR:""}</td><td>${item.comment}</td></tr>`;
+            let badges ="";
+            item.ratingIR<=20? badges+= `<span class="badge badge-ir">${item.ratingIR}</span>`:"";
+            item.qualifiedW?badges+=`<span class="badge badge-w">W</span>`:"";
+            fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/>  ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${badges}</td><td>${item.comment}</td></tr>`;
             lastGrade = item.grade;
         }//end createTable()
     let g = header + fileContent + footer;
@@ -651,7 +739,7 @@ function selectBreaks (crewList, numberOfSectors, VCM) {
         }
         errorHandler("Breaks adjusted for VCM", "green")
     }
-
+    if (classes==4){breaks.A380.LD.GR2 = [1,2,1,2,1,2,1,2]} // Adjustment for 4 class A380
     let f = [];
     // I don't like next line of code, but there was no other way to clone deep nested object (spread operator or Object.assign() led to shallow copy of the original object. I also did not want to use side libraries like lodash for this task)
     for (let z = 1; z<=numberOfSectors; z++){//Idex 0 of this array will be empty value for clarity in sector numbers
@@ -661,7 +749,6 @@ function selectBreaks (crewList, numberOfSectors, VCM) {
     crewList.forEach(crew => {
         for (let s = 1; s<=numberOfSectors; s++){
             if(crew.grade ==="PUR" || crew.grade === "CSV" || crew.grade === "CSA"){ //For positions with specific break in crew rest strategy
-            // for (let s = 1; s<=numberOfSectors; s++){
                 crew[`break${s}`]=f[s][crew[`position${s}`]]
             }
             else {
@@ -699,7 +786,7 @@ function aircraftSelector (input){
         A2C: {reg: ['OP','OQ','OR','OS','OX','OY','UN','UO','UP','UQ','UX','UY','UZ','VA','VB'], description: "A380 2 class (no CRC)", crc: -1, planeType: "A380", classes: 2}, 
         AMD: {reg: [/*489 seats*/ 'DA','DC','DD','DE','DM','DN','DO','DP','DY','DZ','EF','EG','EH','EK','EL','EM','EO','EP','EQ','ET', /*491 seats */ 'EU','EV','OC','OD','OE','OF','OG','OH','OL','OM','ON'], description: "A380 3 class (Main deck CRC)", crc: 3, planeType: "A380", classes:3}, 
         ALD: {reg: ['UE', 'UF', 'UG', 'UH', 'UI', 'UJ', 'UK', 'UL', 'UR', 'US', 'UT', 'UU'], description: "A380 3 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
-        A4C: {reg: ['VN', 'VO', 'VP', 'VQ', 'VR','VS'], description: "A380 4 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 3}, 
+        A4C: {reg: ['VN', 'VO', 'VP', 'VQ', 'VR','VS'], description: "A380 4 class (Lower deck CRC)", crc: 2, planeType: "A380", classes: 4}, 
         ANL: {reg: ['UV', 'UW', 'VC', 'VD', 'VE', 'VF', 'VG', 'VH', 'VI', 'VJ', 'VK', 'VL', 'VM'], description: "A380 3 class New lounge (Lower deck CRC)", crc: 2, planeType: "A380", classes:3}
     }
     let desc = document.querySelector("#description");

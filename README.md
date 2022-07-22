@@ -85,22 +85,29 @@ Thank you.
 - implemented PCR test requirement check
 - Gr2 as CSA icon not implemented - can not find live example to work with
 - implemented automatic breaks allocation with break rotation between sectors    
+     
 7.07.2021   
 - Corrected positions for B777-200. 2 CSV now rostered and 3 Gr1
 - removed temporarily CSA rules from all aircraft types except A380-800 3 class
 - added error handler and error display field in HTML, added tabindex for keyboard navigation
 - moved mid galley position to L3 on all B777 aircrafts
 - fixed empty nickname field for crew without nickname (uses first name instead)   
+     
 05.10.2021    
 - corrected positions for A380 3 class
 - implemented recommended positions for inflight retail operators
 - added 4 class A380
 - added reminder about MFP 2.0 related changes in the output file     
+     
 24.11.2021     
 - fixed bug with inflight retail positions
 - PCR check completely removed since 100% vaccination requirement     
+     
 24.05.2022     
 - Fixed conflict between VCM and IR allocation. Added addition VCM rules
 - Fixed rare bug for crew without CPM
 - Updated fleet data
 - Added short names for Macedonia, Bosnia, Moldova     
+      
+22.07.2022     
+- Implemented 4 class A380 (handling for W class)     
