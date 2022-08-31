@@ -53,7 +53,9 @@ function loadCrew (){
         const nickname = n.getElementsByClassName('nickname')[0].innerHTML
         const staffNumber = n.getElementsByClassName('id')[0].innerHTML.slice(1)
         const fullname = n.getElementsByClassName('fullname')[0].innerHTML
-        const grade = n.getElementsByClassName('grade')[0].innerHTML
+        let grade = n.getElementsByClassName('grade')[0].innerHTML
+        const operatingGrade = getPreviousSibling(n.closest('.row-crew'), '.row-crew-heading').lastElementChild.textContent;
+        if (operatingGrade !== grade) {errorHandler(`${nickname} out of grade`, 'green'); grade = operatingGrade} 
         const content = n.getElementsByClassName('crew-content')[0].innerHTML
         const badges = n.getElementsByClassName('badges')[0].innerHTML
         const flag = content.substring(
@@ -147,6 +149,16 @@ function loadCrew (){
         counter++;
     }//end (for n of crew)
     return crewData;
+
+    function getPreviousSibling (elem, selector) {
+        let sibling = elem.previousElementSibling;
+        if (!selector) return sibling;
+        while (sibling) {
+            if (sibling.matches(selector)) return sibling;
+            sibling = sibling.previousElementSibling
+        }
+    };
+
 }
 const loadPositions = (aType) => {
     // Inflight retail used to be separate category of positions, but removed since new procedure is assign to top seller regardless of grade. 
@@ -154,7 +166,7 @@ const loadPositions = (aType) => {
         PUR: {galley: [], main: ["PUR"]},
         CSV: {galley: [], main: ["ML5", "UL1A", "ML1"]},
         FG1: {galley: ["MR2A"], main: ["UR1", "UL1"]},
-        GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
+        GR1: {galley: ["ML3A", "MR4A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A"]},
         GR2: {galley: ["ML2", "MR4"], main: ["MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
         CSA: {galley: [], main: ["CSA"]} //sits at ML2A
     };
@@ -162,7 +174,7 @@ const loadPositions = (aType) => {
         PUR: {galley: [], main: ["PUR"]},
         CSV: {galley: [], main: ["ML5", "UL1A"]},
         FG1: {galley: ["MR2A"], main: ["UL1","UR1"]},
-        GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
+        GR1: {galley: ["ML3A", "MR4A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A"]},
         GR2: {galley: ["ML2", "MR4"], main: ["ML1", "MR1", "MR5", "ML3", "ML4", "MR3", "MR2"]},
         CSA: {galley: [], main: ["CSA"]} //sits at ML2A
     };
@@ -170,7 +182,7 @@ const loadPositions = (aType) => {
         PUR: {galley: [], main: ["PUR"]},
         CSV: {galley: [], main: ["ML5", "UL1A", "ML1"]},
         FG1: {galley: ["MR2A"], main: ["UL1","UR1"]},
-        GR1: {galley: ["ML3A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A", "MR4A"]},
+        GR1: {galley: ["ML3A", "MR4A"], main: ["UL2", "UR2", "UL3", "UR3", "UR1A", "ML4A"]},
         GR2: {galley: ["ML2", "MR4", "MR3A"], main: ["MR5", "ML3", "ML4", "MR3", "MR2", "MR1"]},
         CSA: {galley: [], main: ["CSA"]} //sits at ML2A
     };
@@ -517,22 +529,23 @@ function selectW (crewList, positions, sectors, positionsW){//Pre-allocates posi
     positions.GR2.galley.pop();
 }
 function selectIR (crewList, positions, sectors, positionsDF){//Sets value true for key inflightRetail
-    const filterCrew = crewList.filter( x => x.ratingIR < 21);
+    const filterCrew = crewList.filter( x => x.ratingIR < 21 && x.grade !== "CSV");
+    console.log(filterCrew)
     if (filterCrew.length){
-        crewList.sort((a, b) => a.ratingIR - b.ratingIR);
+        filterCrew.sort((a, b) => a.ratingIR - b.ratingIR);
         let pre_x = aircraftType.includes('A380') ? 2 : 1;
         let x = filterCrew.length >= pre_x ? pre_x : 1;
         if (x != pre_x) errorHandler("Not enough IR rating crew", "red");
         for (let i=0; i<x; i++){
-            crewList[i].inflightRetail = true;
-            DFgrade = crewList[i].grade;
-            if (positionsDF[plane][classes][DFgrade] && !crewList[i].operatingW){
+            filterCrew[i].inflightRetail = true;
+            DFgrade = filterCrew[i].grade;
+            if (positionsDF[plane][classes][DFgrade] && !filterCrew[i].operatingW){
                 for (let s=1; s<=sectors; s++){
-                        crewList[i][`position${s}`]=positionsDF[plane][classes][DFgrade];
+                        filterCrew[i][`position${s}`]=positionsDF[plane][classes][DFgrade];
                 };
                 positions[DFgrade].main.splice(positions[DFgrade].main.indexOf(positionsDF[plane][classes][DFgrade]), 1);
                 delete positionsDF[plane][classes][DFgrade];
-            } else if (positionsDF[plane][classes][DFgrade] && !crewList[i].operatingW) {
+            } else if (positionsDF[plane][classes][DFgrade] && !filterCrew[i].operatingW) {
                 errorHandler("W and IR conflict", "yellow")
             }
         };
@@ -778,9 +791,9 @@ function aircraftSelector (input){
         CRC: {reg: ['BQ','BR', 'BU', 'BW', 'BY', 'CA', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CI', 'CJ','CK','CM','CN','CO','CP','CQ','CR','CS','CT','CU','CV','CW','CX','GA','GB','GC','GE','GF','GH','GI'], description: "B773 3 class (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
         FS3: {reg: ['PV','PW','PX','PY','PZ','QA','QB','QC','QD','QE','QF','QG'], description: "B773 3 class Falcon seats (with CRC)", crc: 1, planeType: "B773", classes: 3}, 
         FS2: {reg: ['WA', 'WB','WC','WD','WE','WF','WG','WH','WI','WJ'], description: "B772 2 class Falcon seats (with CRC)", crc: 1, planeType: "B772", classes: 2}, 
-        CMC: {reg: ['BJ','BK','BM','BN','BO','GD','GG','GK','GN','GP','GT','GU','GW'], description: "B773 Cargo modified cabin", crc: -1, planeType: "B773", classes: 0}, 
+        CMC: {reg: ['BJ','BK','BM','BN','BO','GD','GG','GK','GP','GT','GU','GW'], description: "B773 Cargo modified cabin", crc: -1, planeType: "B773", classes: 0}, 
         HB2: {reg: ['CY','CZ','NA','NB','NC','ND','NF','NH','NI','NO','NW','NY','PE','PG','PQ','PR','PT'], description: "B773 2 class (Hard blocked seats)", crc: -1, planeType: "B773", classes: 2}, 
-        HB3: {reg: ['GJ','GL','GM','GO','GQ','GR','GS','GV','GX','GY','GZ','NE','NG','NJ','NK','NL','NM','NN','NP','NQ','NR','NS','NT','NU','NV','NX','NZ','PA','PB','PC','PD','PF','PH','PI','PJ','PK','PL','PM','PN','PO','PP','PS','PU'], description: "B773 3 class (Hard blocked seats)", crc: -1, planeType: "B773", classes: 3},
+        HB3: {reg: ['GJ','GL','GM','GN','GO','GQ','GR','GS','GV','GX','GY','GZ','NE','NG','NJ','NK','NL','NM','NN','NP','NQ','NR','NS','NT','NU','NV','NX','NZ','PA','PB','PC','PD','PF','PH','PI','PJ','PK','PL','PM','PN','PO','PP','PS','PU'], description: "B773 3 class (Hard blocked seats)", crc: -1, planeType: "B773", classes: 3},
         //A380 
         ANC: {reg: [/*517 seats*/ 'DF', 'DG', 'DH', 'DI', 'DJ', 'DK', 'DL', 'DQ', 'DR', 'DS', 'DT', 'DU', 'DV', 'DW', 'DX', 'EA', 'EB', 'EC', 'ED', 'EE', 'EI', 'EJ', 'EN', 'ER', 'ES', /*519 seats*/ 'EW', 'EX', 'EY', 'EZ', 'OA', 'OB', 'OI','OJ', 'OK','OO','OT','OU','OV','OW','OZ','UA','UB','UC','UD','UM'], description: "A380 3 class (no CRC)", crc: -1, planeType: "A380", classes: 3}, 
         A2C: {reg: ['OP','OQ','OR','OS','OX','OY','UN','UO','UP','UQ','UX','UY','UZ','VA','VB'], description: "A380 2 class (no CRC)", crc: -1, planeType: "A380", classes: 2}, 
@@ -853,4 +866,5 @@ function errorHandler (message, color) {
 function clearErrors () {
     let field = document.querySelector("#errors");
     field.innerHTML = ``;
+    document.querySelector("#output").innerHTML = ``
 }

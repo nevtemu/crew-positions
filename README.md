@@ -111,3 +111,7 @@ Thank you.
       
 22.07.2022     
 - Implemented 4 class A380 (handling for W class)     
+      
+31.08.2022     
+- Added check for crew working out of grade and on the pool to display correct grade     
+- Fixed bug when IR could be allocated to CSV on the pool with IR rating      
