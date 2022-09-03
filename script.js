@@ -15,7 +15,7 @@ function generate () { //main function
                     B773:{2:{GR1: "R1", GR2: "L2"}, 3:{FG1: "R1", GR1: "L2", GR2: "R3"}}, 
                     B772:{2: {GR1: "R1", GR2: "L2"}}};
         positionsDF.A380[4]= positionsDF.A380[3];
-        let positionsW = {CSV: ["ML1"], GR2: ["MR3A", "MR1"]}; //No junior crew allocated W cabin -- only 4 class A380
+        let positionsW = {CSV: ["ML1"], GR2: ["MR3A"]}; //No junior crew allocated W cabin -- only 4 class A380 // Temporarily removed MR1 position to assign W position to a mix of crew
         positions = loadPositions(aircraftType);
         VCM = checkVCM (positions, crewList);
         if(VCM){
@@ -525,12 +525,11 @@ function selectW (crewList, positions, sectors, positionsW){//Pre-allocates posi
             })})//End of both forEach
     }//end for
     positions.CSV.main.pop();
-    positions.GR2.main.pop();
+    // positions.GR2.main.pop(); //commented temporarly as rule changed to give W positions to a mix of crew
     positions.GR2.galley.pop();
 }
 function selectIR (crewList, positions, sectors, positionsDF){//Sets value true for key inflightRetail
     const filterCrew = crewList.filter( x => x.ratingIR < 21 && x.grade !== "CSV");
-    console.log(filterCrew)
     if (filterCrew.length){
         filterCrew.sort((a, b) => a.ratingIR - b.ratingIR);
         let pre_x = aircraftType.includes('A380') ? 2 : 1;
