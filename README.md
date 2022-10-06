@@ -115,3 +115,5 @@ Thank you.
 31.08.2022     
 - Added check for crew working out of grade and on the pool to display correct grade     
 - Fixed bug when IR could be allocated to CSV on the pool with IR rating      
+06.10.2022     
+- Removed support for W badge as it is no longer company requirement     

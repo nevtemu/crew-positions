@@ -15,17 +15,14 @@ function generate () { //main function
                     B773:{2:{GR1: "R1", GR2: "L2"}, 3:{FG1: "R1", GR1: "L2", GR2: "R3"}}, 
                     B772:{2: {GR1: "R1", GR2: "L2"}}};
         positionsDF.A380[4]= positionsDF.A380[3];
-        let positionsW = {CSV: ["ML1"], GR2: ["MR3A"]}; //No junior crew allocated W cabin -- only 4 class A380 // Temporarily removed MR1 position to assign W position to a mix of crew
         positions = loadPositions(aircraftType);
         VCM = checkVCM (positions, crewList);
         if(VCM){
             errorHandler(`VCM ${VCM} operation`, "yellow");
-            VCM > 0 ? VCMrules(VCM, positions, positionsDF, positionsW) : extraRules(VCM, positions);
+            VCM > 0 ? VCMrules(VCM, positions, positionsDF) : extraRules(VCM, positions);
         }
         outOfGrade = checkOutOfGrade(positions, crewList);
         if (Object.keys(outOfGrade).length > 0){outOfGradeRules(outOfGrade, crewList)}
-        if(classes==4){
-            selectW(crewList, positions, numberOfSectors, positionsW)}
         selectIR(crewList, positions, numberOfSectors, positionsDF); // required before selecting positions yo avoid giving galley/lounge to IR operators
         for (let s=1; s<=numberOfSectors; s++){
             selectPositions(s, positions, crewList)}
@@ -105,7 +102,6 @@ function loadCrew (){
         if (badges.includes("EMIRATESRED TOP SELLER")) {
             ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
         }
-        let qualifiedW = badges.includes("PREMIUM ECONOMY CREW") ? true : false;
         let comment = "";
         if (n.getElementsByClassName("comment").length >= 1) {
             comment = n.getElementsByClassName("comment")[0].innerHTML;
@@ -142,8 +138,6 @@ function loadCrew (){
             timeInGradeNumber,
             lastPosition,
             inflightRetail: false,
-            qualifiedW,
-            operatingW : qualifiedW,
             position1:""
             }) 
         counter++;
@@ -262,7 +256,7 @@ function extraRules(VCM, positions){
         positions.GR2.main.push(EXTRA[aircraftType].shift())
     }
 }
-function VCMrules (VCM, positions, positionsDF, positionsW){
+function VCMrules (VCM, positions, positionsDF){
     //Crew positions adjustment
     switch(aircraftType) {
         //===========================================================================
@@ -306,8 +300,6 @@ function VCMrules (VCM, positions, positionsDF, positionsW){
         case "A380_4class_nonULR":
             if (VCM >= 1){ 
                 positions.GR2.galley.splice(positions.GR2.galley.indexOf("MR3A"),1)
-                positionsW.GR2.shift()
-                positionsW.GR2.push("MR2 (MR3AA)")
             }
             if (VCM >= 2){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML4"),1)
@@ -501,33 +493,7 @@ function outOfGradeRules (outOfGrade, crewList){
         outOfGrade[newGrade] ++;
     } while (Object.values(outOfGrade).reduce((a, b) => a + Math.abs(b)) !== 0)
 }
-//Positions, W, IR and breaks generators   
-function selectW (crewList, positions, sectors, positionsW){//Pre-allocates positions for premium economy crew
-    //Check if enough W crew. If not - add most senior crew to W list
-    Object.keys(positionsW).forEach((grade)=>{
-        if (grade.length > crewList.filter( x => x.qualifiedW && x.grade == grade).length){
-            let availableCrew = crewList.filter( x => x.qualifiedW == false && x.grade == grade)
-            availableCrew.sort((a, b) => a.timeInGrade - b.timeInGrade);
-            for (let i = positionsW[grade].length - crewList.filter( x => x.qualifiedW && x.grade == grade).length; i>0; i--){
-                crewList.find(y = y.staffNumber == availableCrew[0].staffNumber).operatingW = true;
-                availableCrew.shift();
-            }//end for
-        }//end if
-    }) //end forEach
-    for (let s=1; s<=sectors; s++){
-        Object.keys(positionsW).forEach((grade)=>{
-            positionsW[grade].forEach((position)=>{
-                let crewWW = crewList.filter(x => x.grade === grade && x.operatingW && !x.lastPosition.every(v => positionsW[grade].includes(v)) && (x[`position${s}`] == "" || !x.hasOwnProperty(`position${s}`)));
-                if (!crewWW.length){
-                    crewWW = crewList.filter(x => x.grade === grade && x.operatingW && !x.hasOwnProperty(`position${s}`));
-                }
-                allocate(crewWW, position, s)
-            })})//End of both forEach
-    }//end for
-    positions.CSV.main.pop();
-    // positions.GR2.main.pop(); //commented temporarly as rule changed to give W positions to a mix of crew
-    positions.GR2.galley.pop();
-}
+//Positions, IR and breaks generators   
 function selectIR (crewList, positions, sectors, positionsDF){//Sets value true for key inflightRetail
     const filterCrew = crewList.filter( x => x.ratingIR < 21 && x.grade !== "CSV");
     if (filterCrew.length){
@@ -538,14 +504,14 @@ function selectIR (crewList, positions, sectors, positionsDF){//Sets value true 
         for (let i=0; i<x; i++){
             filterCrew[i].inflightRetail = true;
             DFgrade = filterCrew[i].grade;
-            if (positionsDF[plane][classes][DFgrade] && !filterCrew[i].operatingW){
+            if (positionsDF[plane][classes][DFgrade]){
                 for (let s=1; s<=sectors; s++){
                         filterCrew[i][`position${s}`]=positionsDF[plane][classes][DFgrade];
                 };
                 positions[DFgrade].main.splice(positions[DFgrade].main.indexOf(positionsDF[plane][classes][DFgrade]), 1);
                 delete positionsDF[plane][classes][DFgrade];
-            } else if (positionsDF[plane][classes][DFgrade] && !filterCrew[i].operatingW) {
-                errorHandler("W and IR conflict", "yellow")
+            } else if (positionsDF[plane][classes][DFgrade]) {
+                errorHandler("IR conflict", "yellow")
             }
         };
     }
@@ -699,7 +665,6 @@ function createOutput (numberOfSectors, hasBreaks, crewList) {
             }//end for
             let badges ="";
             item.ratingIR<=20? badges+= `<span class="badge badge-ir">${item.ratingIR}</span>`:"";
-            item.qualifiedW?badges+=`<span class="badge badge-w">W</span>`:"";
             fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/>  ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${badges}</td><td>${item.comment}</td></tr>`;
             lastGrade = item.grade;
         }//end createTable()
