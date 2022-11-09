@@ -117,3 +117,5 @@ Thank you.
 - Fixed bug when IR could be allocated to CSV on the pool with IR rating      
 06.10.2022     
 - Removed support for W badge as it is no longer company requirement     
+09.11.2022     
+- Implemented support for all badges (W, PTT, BP, Pool, PS)     

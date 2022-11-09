@@ -40,6 +40,7 @@ tr:hover {
 /* Badges */
 .badge{
     display:inline-block;
+    color: whitesmoke;
     margin: 0 1px;
     padding: 0 3px;
     border-radius: 5px;
@@ -47,13 +48,22 @@ tr:hover {
 }
 .badge-ir {
     background-color:crimson;
-    color:whitesmoke;
 }
 .badge-w {
     background-color:indigo;
-    color:whitesmoke;
 }
 .badge-pcr{
     background-color: darkred;
-    color: whitesmoke;
+}
+.badge-pool{
+    background-color: black;
+}
+.badge-ps{
+    background-color:darkturquoise;
+}
+.badge-bp{
+    background-color:goldenrod;
+}
+.badge-ptt{
+    background-color:darkgreen;
 }

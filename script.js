@@ -102,6 +102,11 @@ function loadCrew (){
         if (badges.includes("EMIRATESRED TOP SELLER")) {
             ratingIR = parseInt(badges.substring(badges.indexOf('SELLER'), badges.indexOf("SELLER")+9 ).slice(-2));
         }
+        badgeW = badges.includes("PREMIUM ECONOMY CREW") ? true : false;
+        badgePool = badges.includes("CSV POOL"||badges.includes("PUR POOL")) ? true : false;
+        badgePS = badges.includes("PEER SUPPORT") ? true : false;
+        badgeBP = badges.includes("BUSINESS PROMOTIONS CREW") ? true : false;
+        badgePTT = badges.includes("PTT") ? true : false;
         let comment = "";
         if (n.getElementsByClassName("comment").length >= 1) {
             comment = n.getElementsByClassName("comment")[0].innerHTML;
@@ -138,7 +143,12 @@ function loadCrew (){
             timeInGradeNumber,
             lastPosition,
             inflightRetail: false,
-            position1:""
+            position1:"",
+            badgePS,
+            badgePool,
+            badgeW,
+            badgeBP,
+            badgePTT
             }) 
         counter++;
     }//end (for n of crew)
@@ -664,7 +674,12 @@ function createOutput (numberOfSectors, hasBreaks, crewList) {
                     }//end if
             }//end for
             let badges ="";
-            item.ratingIR<=20? badges+= `<span class="badge badge-ir">${item.ratingIR}</span>`:"";
+            item.ratingIR<=20? badges+= `<span class="badge badge-ir" title="Duty free rating">${item.ratingIR}</span>`:"";
+            item.badgeW ? badges+= `<span class="badge badge-w" title="Premium economy">W</span>`:"";
+            item.badgePool ? badges+= `<span class="badge badge-pool" title="Pool">&#8679</span>`:"";
+            item.badgePS ? badges+= `<span class="badge badge-ps" title="Peer support">&#9825</span>`:"";
+            item.badgeBP ? badges+= `<span class="badge badge-bp" title="Business promotion">&#9734</span>`:"";
+            item.badgePTT ? badges+= `<span class="badge badge-ptt" title="Trainer">&#9745</span>`:"";
             fileContent += `<tr><td class="centerCell">${item.grade} ${item.originalGrade?"("+item.originalGrade+")":""}</td><td>${item.nickname}</td>${fileContentInsert}<td>${item.fullname}</td><td class="centerCell">${item.staffNumber}</td><td><img src="${item.flag}"/>  ${item.nationality}</td><td>${item.languages}</td><td class="centerCell">${item.timeInGrade}</td><td class="centerCell">${badges}</td><td>${item.comment}</td></tr>`;
             lastGrade = item.grade;
         }//end createTable()
