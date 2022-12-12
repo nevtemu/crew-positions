@@ -121,4 +121,8 @@ Thank you.
       
 09.11.2022     
 - Implemented support for all badges (W, PTT, BP, Pool, PS)     
+       
+12.12.2022     
+- Added short name for Syria     
+- Fixed rare bug for crew with no grade experience at all      
       

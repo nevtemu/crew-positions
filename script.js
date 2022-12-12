@@ -71,6 +71,7 @@ function loadCrew (){
             .replace("Russian Federation", "Russia")
             .replace("Bosnia And Herzegovina", "Bosnia")
             .replace("Republic Of Macedonia", "Macedonia")
+            .replace("Syrian Arab Republic", "Syria")
             .trim();
         const languages = content.substring(
             content.indexOf("Languages:</b> ") + 15,
@@ -78,7 +79,9 @@ function loadCrew (){
             )
             .replace("Ukranian", "Ukrainian");//Grammar correction
         let timeInGrade;
-        if (content.includes("Years") === -1) {//Case when crew worked 2 years or more in current grade
+        if (content.includes("Grade Exp: </b>-</p>")){ //Case when crew has no experience at all
+            timeInGrade = "0y  0m";
+        } else if (content.includes("Years") === -1) {//Case when crew worked 2 years or more in current grade
             timeInGrade = content.substring(
                 content.indexOf("<b>Grade Exp: </b>") + 18,
                 content.indexOf("Year")-1
