@@ -126,3 +126,8 @@ Thank you.
 - Added short name for Syria     
 - Fixed rare bug for crew with no grade experience at all      
       
+19.04.2023     
+- Added short name for Brunei     
+- Fixed bugs with VCM handling rules      
+- Added 4th Gr1 for 2 class aircraft      
+      

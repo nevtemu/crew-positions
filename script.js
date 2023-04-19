@@ -72,6 +72,7 @@ function loadCrew (){
             .replace("Bosnia And Herzegovina", "Bosnia")
             .replace("Republic Of Macedonia", "Macedonia")
             .replace("Syrian Arab Republic", "Syria")
+            .replace("Brunei Darussalam", "Brunei")
             .trim();
         const languages = content.substring(
             content.indexOf("Languages:</b> ") + 15,
@@ -214,7 +215,7 @@ const loadPositions = (aType) => {
         PUR: {galley: [], main: ["PUR"]},
         CSV: {galley: [], main: ["L5"]},
         FG1: {galley: [], main: []},//empty field required so this grade is not skipped when calculation outOfGrade()
-        GR1: {galley: ["L1A"], main: ["L1", "R1"]}, // L1A seated at R1A
+        GR1: {galley: ["L1A"], main: ["L1", "R1", "R1A"]}, // L1A seated at at R5A
         GR2: {galley: ["R5", "L3"], main: ["L2", "L4", "R4", "R3", "R2", "L5A"]},
         CSA: {galley: [], main: []}
     };
@@ -283,13 +284,13 @@ function VCMrules (VCM, positions, positionsDF){
             }
             if (VCM >= 2){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("MR5"),1)
-                positions.GR1.main.splice(positions.GR1.main.indexOf("MR4A"),1)
-                positions.GR1.main.push("MR5 (MR4A)")
+                positions.GR1.galley.splice(positions.GR1.galley.indexOf("MR4A"),1)
+                positions.GR1.galley.push("MR5 (MR4A)")
                 delete positionsDF.A380[3].GR2
             }
             if (VCM >= 3){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
-                positions.GR1.galley.splice(positions.GR1.main.indexOf("ML3A"),1)
+                positions.GR1.galley.splice(positions.GR1.galley.indexOf("ML3A"),1)
                 positions.GR1.galley.push("ML3 (ML3A)")
             }
             if (VCM >= 4 && aircraftType === "A380_3class_ULR"){ 
@@ -322,13 +323,13 @@ function VCMrules (VCM, positions, positionsDF){
             }
             if (VCM >= 3){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("MR5"),1)
-                positions.GR1.main.splice(positions.GR1.main.indexOf("MR4A"),1)
-                positions.GR1.main.push("MR5 (MR4A)")
+                positions.GR1.galley.splice(positions.GR1.galley.indexOf("MR4A"),1)
+                positions.GR1.galley.push("MR5 (MR4A)")
                 delete positionsDF.A380[4].GR2
             }
             if (VCM >= 4){ 
                 positions.GR2.main.splice(positions.GR2.main.indexOf("ML3"),1)
-                positions.GR1.galley.splice(positions.GR1.main.indexOf("ML3A"),1)
+                positions.GR1.galley.splice(positions.GR1.galley.indexOf("ML3A"),1)
                 positions.GR1.galley.push("ML3 (ML3A)")
             }
             if (VCM >= 5){ 
