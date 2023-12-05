@@ -1,5 +1,11 @@
 # Automatic allocation of cabin crew positions
 
+### <span style="color:red">&#9888; Version deprecated</span>           
+This project is deprecated as it is no longer being maintained.           
+Kindly check out [new version](https://github.com/nevtemu/crew-positions-3 "Crew positions 3").
+<hr/>
+<br/>
+
 Allocating crew positions before the flight can be a challenging task.   
 Many rules and requirements involved in the process and at times it can be time consuming. 
 
@@ -129,5 +135,14 @@ Thank you.
 19.04.2023     
 - Added short name for Brunei     
 - Fixed bugs with VCM handling rules      
-- Added 4th Gr1 for 2 class aircraft      
+- Added 4th Gr1 position for B777-300 2 class aircraft      
       
+05.12.2023
+- Removed cargo modified cabin aircrafts          
+
+<br/>
+<hr/>
+
+### <span style="color:red">&#9888; Version deprecated</span>           
+This project is deprecated as it is no longer being maintained.           
+Kindly check out [new version](https://github.com/nevtemu/crew-positions-3 "Crew positions 3").
