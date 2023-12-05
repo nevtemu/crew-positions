@@ -1,13 +1,13 @@
 # Automatic allocation of cabin crew positions
 
-<!-- ### $${\color{red}}$$                       -->
+<!-- ### $${\color{red}&#9888; \ Version \ deprecated}$$                       -->
 <!-- ### <span style="color:red">&#9888; Version deprecated</span>            -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 20" fill="none">
+<!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 20" fill="none">
     <text x="0" y="15" fill="red">&#9888; Version deprecated</text>
-</svg>       
-
-This project is deprecated as it is no longer being maintained.           
-Kindly check out [new version](https://github.com/nevtemu/crew-positions-3 "Crew positions 3").
+</svg>        -->
+> [!WARNING]  
+> This project is deprecated as it is no longer being maintained.           
+> Kindly check out [new version](https://github.com/nevtemu/crew-positions-3 "Crew positions 3").
 <hr/>
 <br/>
 
