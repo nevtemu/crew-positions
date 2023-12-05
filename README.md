@@ -1,6 +1,6 @@
 # Automatic allocation of cabin crew positions
-
-### <span style="color:red">&#9888; Version deprecated</span>           
+        
+<span style="color:red; font-size:1.5em">&#9888; Version deprecated</span>           
 This project is deprecated as it is no longer being maintained.           
 Kindly check out [new version](https://github.com/nevtemu/crew-positions-3 "Crew positions 3").
 <hr/>
@@ -143,6 +143,6 @@ Thank you.
 <br/>
 <hr/>
 
-### <span style="color:red">&#9888; Version deprecated</span>           
+<span style="color:red; font-size:1.5em">&#9888; Version deprecated</span>            
 This project is deprecated as it is no longer being maintained.           
 Kindly check out [new version](https://github.com/nevtemu/crew-positions-3 "Crew positions 3").
